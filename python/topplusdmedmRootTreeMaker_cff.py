@@ -28,7 +28,7 @@ systsToSave = ["noSyst","jes__up","jes__down","jer__up","jer__down"]
 #systsToSave = ["noSyst","jer__up","jer__down"]
 #systsToSave = ["jer__up","jer__down","unclusteredMet__up","unclusteredMet__down"]
 systsToSave = ["noSyst","unclusteredMet__up","unclusteredMet__down"]
-#systsToSave = ["noSyst","jes__up","jes__down"]
+systsToSave = ["noSyst","jes__up","jes__down"]
 #systsToSave = ["noSyst"]
 
 #systsToSave = ["noSyst","unclusteredMet__up","unclusteredMet__down"]
@@ -40,6 +40,12 @@ metFilters = ["Flag_CSCTightHaloFilter","Flag_goodVertices", "Flag_eeBadScFilter
 catMu = ["Tight","Loose"]
 catEl = ["Tight","Veto"]
 catJet = ["Tight"]
+
+scanMu = ["Pt_30","Pt_40"]
+scanEl = []
+scanJet = ["CorrPt_30","CorrPt_40"]
+#scanJet = ["CorrPt_30"]
+#scanJet = ["Pt_30","Pt_40"]
 
 #Triggers 50 ns
 #SingleElTriggers = ["HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v1"]
@@ -94,6 +100,7 @@ DMTreesDumper = cms.EDAnalyzer(
             maxInstances =  cms.untracked.int32(1),
             saveBaseVariables = cms.untracked.bool(True),
             categories = cms.vstring(),
+            scanCuts = cms.vstring(),
             variablesD = cms.VInputTag(),
             variablesF = cms.VInputTag(
                 cms.InputTag("metFull","metFulluncorPt"),
@@ -174,7 +181,6 @@ DMTreesDumper = cms.EDAnalyzer(
         )
     )
 
-
 #DMTreesDumper.physicsObjects.append( 
 #    cms.PSet(
 #        label = metNoHFlabel,
@@ -207,7 +213,7 @@ DMTreesDumper.physicsObjects.append(
         maxInstances = leptonssize,
         saveBaseVariables = saveBase,
         saveNoCat = cms.untracked.bool(saveNoCategory),
-        #        categories = cms.vstring(),
+        #categories = cms.vstring(),
         variablesD = cms.VInputTag(),
         variablesF = cms.VInputTag(
             cms.InputTag("muons","muE"),
@@ -257,6 +263,7 @@ DMTreesDumper.physicsObjects.append(
         singleD = cms.VInputTag(),
         singleI = cms.VInputTag(),
         singleF = cms.VInputTag(),
+        scanCuts = cms.vstring(scanMu),
         categories = cms.vstring(catMu),
         #        categories = cms.vstring("Tight","Loose"),
         toSave = cms.vstring("muE","muPt","muEta","muPhi","muIso04","muCharge","muIsTightMuon","muIsLooseMuon","allExtra"),
@@ -270,6 +277,7 @@ DMTreesDumper.physicsObjects.append(
         maxInstances =  leptonssize,
         saveBaseVariables = cms.untracked.bool(True),
         categories = cms.vstring(),
+        scanCuts = cms.vstring(),
         variablesD = cms.VInputTag(),
         variablesF = cms.VInputTag(
             cms.InputTag("photons","phoEta"),
@@ -332,6 +340,7 @@ DMTreesDumper.physicsObjects.append(
         singleD = cms.VInputTag(),
         singleI = cms.VInputTag(),
         singleF = cms.VInputTag(),
+        scanCuts = cms.vstring(scanEl),
         categories = cms.vstring(catEl),
 #        categories = cms.vstring("Tight","Veto"),
         toSave = cms.vstring("elE","elPt","elEta","elPhi","elIso03","elisTight","elisMedium","elisLoose","elisVeto","elscEta","allExtra"),
@@ -346,6 +355,7 @@ DMTreesDumper.physicsObjects.append(
         prefix = cms.string(""),
         maxInstances =  cms.untracked.int32(1),
         saveBaseVariables = cms.untracked.bool(True),
+        scanCuts = cms.vstring(),
         categories = cms.vstring(),
         variablesF = cms.VInputTag(),
         variablesD = cms.VInputTag(),
@@ -373,6 +383,7 @@ DMTreesDumper.physicsObjects.append(
         maxInstances =  cms.untracked.int32(1),
         saveBaseVariables = cms.untracked.bool(True),
         categories = cms.vstring(),
+        scanCuts = cms.vstring(),
         variablesF = cms.VInputTag(),
         variablesD = cms.VInputTag(),
         variablesI = cms.VInputTag(),
@@ -399,6 +410,7 @@ DMTreesDumper.physicsObjects.append(
         maxInstances =  cms.untracked.int32(1),
         saveBaseVariables = cms.untracked.bool(True),
         categories = cms.vstring(),
+        scanCuts = cms.vstring(),
         variablesF = cms.VInputTag(),
         variablesD = cms.VInputTag(),
         variablesI = cms.VInputTag(),
@@ -426,7 +438,7 @@ DMTreesDumper.physicsObjects.append(
             cms.InputTag(j,jpref+"Mass"),
             cms.InputTag(j,jpref+"Eta"),
             cms.InputTag(j,jpref+"Phi"),
-            cms.InputTag(j,jpref+"QGL"),
+#            cms.InputTag(j,jpref+"QGL"),
             cms.InputTag(j,jpref+"PartonFlavour"),
             cms.InputTag(j,jpref+"Phi"),
             cms.InputTag(j,jpref+"CSVv2"),
@@ -503,6 +515,7 @@ DMTreesDumper.physicsObjects.append(
         singleI = cms.VInputTag(),
         singleF = cms.VInputTag(),
         #toSave = cms.vstring(jpref+"Eta",jpref+"Phi","allExtra"),
+        scanCuts = cms.vstring(scanJet),
         categories = cms.vstring(catJet),
 #        categories = cms.vstring("Tight"),
         toSave = cms.vstring(jpref+"E",jpref+"Pt",jpref+"Eta",jpref+"Phi",jpref+"GenJetPt",jpref+"GenJetEta",jpref+"CSVv2",jpref+"PartonFlavour",jpref+"QGL", jpref+"jecFactor0",jpref+"pileupJetIdRMS", jpref+"pileupJetIdbeta", jpref+"pileupJetIdbetaClassic", jpref+"pileupJetIdbetaStar", jpref+"pileupJetIdbetaStarClassic", jpref+"pileupJetIddR2Mean", jpref+"pileupJetIddRMean", jpref+"pileupJetIddZ", jpref+"pileupJetIdfrac01", jpref+"pileupJetIdfrac02", jpref+"pileupJetIdfrac03", jpref+"pileupJetIdfrac04", jpref+"pileupJetIdjetR", jpref+"pileupJetIdjetRchg", jpref+"pileupJetIdmajW", jpref+"pileupJetIdminW", jpref+"pileupJetIdnCharged", jpref+"pileupJetIdnNeutrals", jpref+"pileupJetIdnParticles", jpref+"pileupJetIdptD", jpref+"pileupJetIdpull","allExtra"),
@@ -515,6 +528,7 @@ if(doAK8):
             label = jetak8label,
             prefix = cms.string(j8pref),
             maxInstances = cms.untracked.int32(10),
+            scanCuts = cms.vstring(),
             categories = cms.vstring(),
             variablesD = cms.VInputTag(),
             variablesF = cms.VInputTag(
@@ -552,6 +566,7 @@ if(doAK8):
             label = subjetak8label,
             prefix = cms.string(sjpref),
             maxInstances = cms.untracked.int32(10),
+            scanCuts = cms.vstring(),
             categories = cms.vstring(),
             variablesD = cms.VInputTag(),
             variablesF = cms.VInputTag(
@@ -579,6 +594,7 @@ DMTreesDumper.physicsObjects.append(
         prefix = cms.string("genPart"),
         maxInstances = genpartsize,
         saveBaseVariables = saveBase,
+        scanCuts = cms.vstring(),
         categories = cms.vstring(),
         variablesD = cms.VInputTag(),
         variablesF = cms.VInputTag(

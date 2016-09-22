@@ -70,7 +70,8 @@ options.register('sample',
 #                 'root://xrootd.ba.infn.it//store/user/dpinna/TTDM_Fwv7.4.x_v6.1_25ns/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/psDMtt_Mchi1Mphi500_1Oct/150930_221122/0000/B2GEDMNtuple_1.root',
                  
 #                 'root://xrootd.ba.infn.it//store/user/grauco/Ntuples_Fwk76v1_wPileUpJet/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/b2ganafw76x_QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp_02Mar_v3/160302_134653/0000/B2GEDMNtuple_1.root',
-                 'file:/tmp/oiorio/B2GEDMNtuple.root',
+#                 'file:/tmp/oiorio/B2GEDMNtuple.root',
+                 'file:../../B2GAnaFW/test/B2GEDMNtuple.root',
                  #'file:B2GEDMNtuple_QCD.root',
                  #'file:B2GEDMNtuple_DoubleMuon.root',  
 #                 'file:B2GEDMNtuple_test.root',
@@ -191,7 +192,7 @@ if(options.isData):
 process = cms.Process("ttDManalysisTrees")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 10
 process.MessageLogger.categories.append('HLTrigReport')
 ### Output Report
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
