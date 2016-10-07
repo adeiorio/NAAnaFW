@@ -521,10 +521,10 @@ DMAnalysisTreeMaker::DMAnalysisTreeMaker(const edm::ParameterSet& iConfig){
     t_metBits_ = consumes< std::vector<float> >( metBits_ );
     edm::InputTag metNames_ = iConfig.getParameter<edm::InputTag>("metNames");
     t_metNames_ = consumes< std::vector<string> >( metNames_ );
-    edm::InputTag HBHEFilter_ = iConfig.getParameter<edm::InputTag>("HBHEFilter");
-    t_HBHEFilter_ = consumes< bool >( HBHEFilter_ );
-    edm::InputTag HBHEIsoFilter_ = iConfig.getParameter<edm::InputTag>("HBHEIsoFilter");
-    t_HBHEIsoFilter_ = consumes< bool >( HBHEIsoFilter_ );
+    //    edm::InputTag HBHEFilter_ = iConfig.getParameter<edm::InputTag>("HBHEFilter");
+    //    t_HBHEFilter_ = consumes< bool >( HBHEFilter_ );
+    //    edm::InputTag HBHEIsoFilter_ = iConfig.getParameter<edm::InputTag>("HBHEIsoFilter");
+    //    t_HBHEIsoFilter_ = consumes< bool >( HBHEIsoFilter_ );
   }
   
   addPV = iConfig.getUntrackedParameter<bool>("addPV",true);
@@ -1178,8 +1178,8 @@ void DMAnalysisTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetu
   if(useMETFilters){
     iEvent.getByToken(t_metBits_,metBits );
     iEvent.getByToken(t_metNames_,metNames );
-    iEvent.getByToken(t_HBHEFilter_ ,HBHE);
-    iEvent.getByToken(t_HBHEFilter_ ,HBHEIso);
+    //    iEvent.getByToken(t_HBHEFilter_ ,HBHE);
+    //    iEvent.getByToken(t_HBHEFilter_ ,HBHEIso);
     if(isFirstEvent){
       for(size_t bt = 0; bt < metNames->size();++bt){
 	std::string tname = metNames->at(bt);
@@ -1565,7 +1565,9 @@ void DMAnalysisTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetu
     } 
     int firstidx=-1, secondidx=-1;
     double maxpt=0.0;
-
+    
+    int nTightLeptons = float_values["Event_nTightMuons"]+float_values["Event_nTightElectrons"];
+    
     for(size_t l =0; l< leptons.size();++l){
       double lpt= leptons.at(l).Pt();
       if(lpt>maxpt){maxpt = lpt;firstidx=l;}
@@ -1868,7 +1870,9 @@ void DMAnalysisTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetu
       bool passes = true;
       //bool metCondition = (metptCorr >100.0);
       
-      passes = passes && nTightJets>=0;
+      passes = passes && nTightJets>=1.0;
+      passes = passes && nTightLeptons>=1.0;
+
       if (!passes ) {
 	//Reset event weights/#objects
 	string nameshortv= "Event";
@@ -1976,8 +1980,8 @@ void DMAnalysisTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetu
      float_values["Event_nPV"]=(float)(nPV);
     }
     
-    float_values["Event_passesHBHE"]=(float)(*HBHE);
-    float_values["Event_passesHBHEIso"]=(float)(*HBHEIso);
+    //    float_values["Event_passesHBHE"]=(float)(*HBHE);
+    //    float_values["Event_passesHBHEIso"]=(float)(*HBHEIso);
 
     //technical event information
     double_values["Event_EventNumber"]=*eventNumber;
@@ -2525,8 +2529,8 @@ vector<string> DMAnalysisTreeMaker::additionalVariables(string object){
 	addvar.push_back("passes"+trig);
       }
       addvar.push_back("passesMETFilters");
-      addvar.push_back("passesHBHE");
-      addvar.push_back("passesHBHEIso");
+      //      addvar.push_back("passesHBHE");
+      //      addvar.push_back("passesHBHEIso");
     }
     if(useTriggers){
       for (size_t lt = 0; lt < SingleElTriggers.size(); ++lt)  {

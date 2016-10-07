@@ -60,15 +60,25 @@ def main():
     config.section_("Data")
     config.Data.inputDataset = None
     config.Data.ignoreLocality = True
-    config.Data.outLFNDirBase = '/store/user/oiorio/ttDM/trees/2016/Apr/25Apr/'
     config.Data.inputDBS = 'phys03'
     config.Data.splitting = 'FileBased'
     #    config.Data.totalUnits = -1
     config.Data.unitsPerJob = 5
     config.Data.publication = False
 
+    
+    #Case: Zurich
+    config.Data.outLFNDirBase = '/store/user/oiorio/ttDM/trees/2016/Apr/25Apr/'
+    #Case: Pisa
+    config.Data.outLFNDirBase = '/store/user/oiorio/Trees/'
+
+
     config.section_("Site")
+    #Case: Zurich
     config.Site.storageSite = 'T2_CH_CSCS'
+    
+    #Case: Pisa
+    #    config.Site.storageSite = 'T2_IT_Pisa'
     #config.Site.whitelist = ['T2_CH_CERN','T2_IT_*','T2_DE_*','T2_CH_*']
 
 

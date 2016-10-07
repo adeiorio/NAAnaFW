@@ -41,7 +41,7 @@ catMu = ["Tight","Loose"]
 catEl = ["Tight","Veto"]
 catJet = ["Tight"]
 
-scanMu = ["Pt_30","Pt_40"]
+scanMu = ["Pt_30"]
 scanEl = []
 scanJet = ["CorrPt_30","CorrPt_40"]
 #scanJet = ["CorrPt_30"]
@@ -146,9 +146,9 @@ DMTreesDumper = cms.EDAnalyzer(
     runNumber = cms.InputTag("eventInfo","evtInfoRunNumber"),
     eventNumber = cms.InputTag("eventInfo","evtInfoEventNumber"),
     #HBHE
-    #HBHEFilter = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResultRun1"),
-    HBHEFilter = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResultRun2Loose"),
-    HBHEIsoFilter = cms.InputTag("HBHENoiseFilterResultProducer","HBHEIsoNoiseFilterResult"),
+#    HBHEFilter = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResultRun1"),
+#    HBHEFilter = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResultRun2Loose"),
+#    HBHEIsoFilter = cms.InputTag("HBHENoiseFilterResultProducer","HBHEIsoNoiseFilterResult"),
     #vertex
     vertexZ =  cms.InputTag("vertexInfo","z"),
     vertexChi2 =  cms.InputTag("vertexInfo","chi"),
@@ -466,8 +466,6 @@ DMTreesDumper.physicsObjects.append(
             cms.InputTag(j,jpref+"HadronFlavour"),
             cms.InputTag(j,jpref+"SmearedE"),
             cms.InputTag(j,jpref+"SmearedPt"),
-            cms.InputTag(j,jpref+"SmearedPEta"),
-            cms.InputTag(j,jpref+"SmearedPhi"),
             cms.InputTag(j,jpref+"Y"),
             cms.InputTag(j,jpref+"chargedEmEnergyFrac"),
             cms.InputTag(j,jpref+"chargedHadronEnergyFrac"),
