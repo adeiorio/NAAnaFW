@@ -282,6 +282,7 @@ int main(int argc, char **argv) {
     systZero.setOnlyNominal(onlyNominal);
 
     bool addPDF=false,addQ2=false,addTopPt=false,addVHF=false,addTTSplit=false;
+    addQ2=true;addPDF=true;
     if(sample=="TT"){
         addTTSplit=false;
         }
@@ -894,8 +895,14 @@ int main(int argc, char **argv) {
   TH1F *h_2j1t_mtwcut_sr_leadingextrajetcsv_sd_b[maxSysts];   systZero.initHistogramsSysts(h_2j1t_mtwcut_sr_leadingextrajetcsv_sd_b,  "h_2j1t_mtwcut_sr_leadingextrajetcsv_sd_b",  "2j1t csv of the leading extra jet",100,0.,1.0);
   TH1F *h_2j1t_mtwcut_sr_topMassExtra_sd_b[maxSysts];  systZero.initHistogramsSysts(h_2j1t_mtwcut_sr_topMassExtra_sd_b, "h_2j1t_mtwcut_sr_topMassExtra_sd_b", "2j1t top mass with the first extra jet as b",200,100,500);
   
-
-
+  //BDT plots 
+  TH1F *h_2j1t_mtwcut_BDT_STvsVJ[maxSysts]; systZero.initHistogramsSysts(h_2j1t_mtwcut_BDT_STvsVJ, "h_2j1t_mtwcut_BDT_STvsVJ", "BDT ST-vs-VJ 2j1t with mtwcut", 50, -1, 1);
+  TH1F *h_2j1t_mtwcut_BDT_STvsTT[maxSysts]; systZero.initHistogramsSysts(h_2j1t_mtwcut_BDT_STvsTT, "h_2j1t_mtwcut_BDT_STvsTT", "BDT ST-vs-VJ 2j1t with mtwcut", 50, -1, 1); 
+  
+  TH1F *h_2j1t_mtwcut_BDT_STsdvsVJ[maxSysts]; systZero.initHistogramsSysts(h_2j1t_mtwcut_BDT_STsdvsVJ, "h_2j1t_mtwcut_BDT_STsdvsVJ", "BDT STsd-vs-VJ 2j1t with mtwcut", 50, -1, 1);
+  TH1F *h_2j1t_mtwcut_BDT_STsdvsST[maxSysts]; systZero.initHistogramsSysts(h_2j1t_mtwcut_BDT_STsdvsST, "h_2j1t_mtwcut_BDT_STsdvsST", "BDT STsd-vs-VJ 2j1t with mtwcut", 50, -1, 1);
+  
+  //Other possible cr:
   //Other possible cr:
   //Features of top quarks reconstructed with pt 20.
   
@@ -1304,6 +1311,25 @@ int main(int argc, char **argv) {
     syst2BM.setWeight("puDown",bWeight2CSVM*puDownFact);
     syst2BM.setWeight("lepUp",bWeight2CSVM*sf_lepUp);
     syst2BM.setWeight("lepDown",bWeight2CSVM*sf_lepDown);
+
+    if(addPDF){
+      syst0BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+      syst1BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+      syst2BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+      
+    }
+    if(addQ2){
+      syst0BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+      syst1BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+      syst2BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+      
+    }
+    if(addTopPt){
+      syst0BM.setTWeight(w_top,topWeight,true);
+      syst1BM.setTWeight(w_top,topWeight,true);
+      syst2BM.setTWeight(w_top,topWeight,true);
+    }
+
     
     vector<float> jetsPhi;
     
@@ -1808,21 +1834,23 @@ int main(int argc, char **argv) {
 	  //cout << AllReaders.at(rd)->EvaluateMVA("BDTG")<<endl;
 	  if(AllReaderNames.at(rd)==("ST_vs_VJ")) {
 	    *bdt_st_vs_vj_2j1t_mtwcut = AllReaders.at(rd)->EvaluateMVA("BDTG");
+	    syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_BDT_STvsVJ,*bdt_st_vs_vj_2j1t_mtwcut,w);
 	  }
 	  if(AllReaderNames.at(rd)==("ST_vs_TT")) {
 	    *bdt_st_vs_tt_2j1t_mtwcut = AllReaders.at(rd)->EvaluateMVA("BDTG");
+	    syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_BDT_STvsTT,*bdt_st_vs_tt_2j1t_mtwcut,w);
 	  }
 	  if(AllReaderNames.at(rd)==("STsd_vs_VJ")) {
 	    *bdt_stsd_vs_vj_2j1t_mtwcut = AllReaders.at(rd)->EvaluateMVA("BDTG");
+	    syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_BDT_STsdvsVJ,*bdt_stsd_vs_vj_2j1t_mtwcut,w);
 	  }
 	  if(AllReaderNames.at(rd)==("STsd_vs_ST")) {
 	    *bdt_stsd_vs_st_2j1t_mtwcut = AllReaders.at(rd)->EvaluateMVA("BDTG");
+	    syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_BDT_STsdvsST,*bdt_stsd_vs_st_2j1t_mtwcut,w);
 	  }
-
 	}
       }
       if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t_mtwcut");
-
     }
     if(signalenriched && qcddepleted) {
       *w_2j1t_mtwcut_sr=w;
@@ -2079,6 +2107,16 @@ int main(int argc, char **argv) {
   if(doTtoSDDecay){    systZero.writeHistogramsSysts(h_2j1t_leadingextrajetpt_sd_b,   allMyFiles); 
     systZero.writeHistogramsSysts(h_2j1t_leadingextrajetcsv_sd_b,   allMyFiles); 
     systZero.writeHistogramsSysts(h_2j1t_leadingextrajetcsv_reshape_sd_b,   allMyFiles);   }
+
+
+  //BDT Histos  
+  systZero.writeHistogramsSysts(h_2j1t_mtwcut_BDT_STvsVJ, allMyFiles);
+  systZero.writeHistogramsSysts(h_2j1t_mtwcut_BDT_STvsTT, allMyFiles);
+  
+  systZero.writeHistogramsSysts(h_2j1t_mtwcut_BDT_STsdvsVJ, allMyFiles);
+  systZero.writeHistogramsSysts(h_2j1t_mtwcut_BDT_STsdvsST, allMyFiles);
+  
+
   systZero.writeHistogramsSysts(h_2j1t_dR_lepjetpt40_1st,    allMyFiles);
   systZero.writeHistogramsSysts(h_2j1t_dPhi_lepjetpt40_1st,  allMyFiles);
   systZero.writeHistogramsSysts(h_2j1t_dEta_lepjetpt40_1st,  allMyFiles);
