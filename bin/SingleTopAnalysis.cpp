@@ -168,6 +168,7 @@ int main(int argc, char **argv) {
     TChain chainNEvents(treePathNEvents);
     chainNEvents.AddFileInfoList(fc.GetList());
     Int_t nEventsTot = (Int_t)chainNEvents.GetEntries();
+
     
     TH1D totalWeightTop("w_top_total","Top pt reweighting: overall sample weight",2000,0,2.0);
     chainNEvents.Project("w_top_total","Event_T_Weight","Event_T_Weight!=1.00");
@@ -203,15 +204,36 @@ int main(int argc, char **argv) {
     float jetReshapeFactorCSV[sizeMax],jetReshapeFactorCSV_SD[sizeMax];
     float jetReshapeFactorCMVA[sizeMax],jetReshapeFactorCMVA_SD[sizeMax];
     float jetHadronFlavour[sizeMax],jetPartonFlavour[sizeMax];
-
     float jet20E[sizeMax], jet20Pt[sizeMax], jet20Phi[sizeMax], jet20Eta[sizeMax];
-    float jetIsCSVL[sizeMax], jetIsCSVM[sizeMax], jetIsCSVT[sizeMax],jetIsLoose[sizeMax],jetIsTight[sizeMax],jetak4chs_csvv2[sizeMax];
+
+
+    int jetJesUpSize, jetJesDownSize, jet20JesUpSize, jet20JesDownSize;
+    
+    float jetJesUpE[sizeMax], jetJesUpPt[sizeMax], jetJesUpPhi[sizeMax], jetJesUpEta[sizeMax];
+    float jetJesDownE[sizeMax], jetJesDownPt[sizeMax], jetJesDownPhi[sizeMax], jetJesDownEta[sizeMax];
+
+    float jet20JesUpE[sizeMax], jet20JesUpPt[sizeMax], jet20JesUpPhi[sizeMax], jet20JesUpEta[sizeMax];
+    float jet20JesDownE[sizeMax], jet20JesDownPt[sizeMax], jet20JesDownPhi[sizeMax], jet20JesDownEta[sizeMax];
+
+
+
+    float jetIsCSVL[sizeMax], jetIsCSVM[sizeMax], jetIsCSVT[sizeMax],jetIsLoose[sizeMax],jetIsTight[sizeMax],jetak4chs_csvv2[sizeMax],jetJesUpak4chs_csvv2[sizeMax],jetJesDownak4chs_csvv2[sizeMax];
+
+    float jetJesUpIsCSVT[sizeMax],jet20JesUpIsCSVT[sizeMax],jetJesDownIsCSVT[sizeMax],jet20JesDownIsCSVT[sizeMax];
+    
     float jetIsCMVAL[sizeMax], jetIsCMVAM[sizeMax], jetIsCMVAT[sizeMax],jetak4chs_cmvav2[sizeMax];
-    float jetPassesB[sizeMax], jet20PassesB[sizeMax];
+    float jetPassesB[sizeMax], jet20PassesB[sizeMax], jetJesUpPassesB[sizeMax], jet20JesUpPassesB[sizeMax], jetJesDownPassesB[sizeMax], jet20JesDownPassesB[sizeMax];
     float jet20IsCSVL[sizeMax], jet20IsCSVM[sizeMax], jet20IsCSVT[sizeMax],jet20IsLoose[sizeMax],jet20IsTight[sizeMax],jet20ak4chs_csvv2[sizeMax];
     float jet20ReshapeFactorCSV[sizeMax],jet20ReshapeFactorCSV_SD[sizeMax];
-    float jet20ReshapeFactorCMVA[sizeMax],jet20ReshapeFactorCMVA_SD[sizeMax];
+ 
+    float jet20JesUpReshapeFactorCSV[sizeMax],jet20JesUpReshapeFactorCSV_SD[sizeMax],jet20JesUpak4chs_csvv2[sizeMax];
+    float jet20JesDownReshapeFactorCSV[sizeMax],jet20JesDownReshapeFactorCSV_SD[sizeMax],jet20JesDownak4chs_csvv2[sizeMax];
+  
+
+    //    float jet20ReshapeFactorCMVA[sizeMax],jet20ReshapeFactorCMVA_SD[sizeMax];
     float jet20HadronFlavour[sizeMax],jet20PartonFlavour[sizeMax];
+    float jet20JesUpHadronFlavour[sizeMax],jet20JesUpPartonFlavour[sizeMax];
+    float jet20JesDownHadronFlavour[sizeMax],jet20JesDownPartonFlavour[sizeMax];
 
 
 
@@ -263,7 +285,6 @@ int main(int argc, char **argv) {
     float bWeight1CSVM(1.), bWeight1CSVMBTagUp(1.),bWeight1CSVMBTagDown(1.),bWeight1CSVMMisTagUp(1.),bWeight1CSVMMisTagDown(1.);
     float bWeight2CSVM(1.), bWeight2CSVMBTagUp(1.),bWeight2CSVMBTagDown(1.),bWeight2CSVMMisTagUp(1.),bWeight2CSVMMisTagDown(1.);
     
-
     float lepWeight1Mu(1.), lepWeight1MuLepUp(1.), lepWeight1MuLepDown(1.);
     float lepWeight1Ele(1.), lepWeight1EleLepUp(1.), lepWeight1EleLepDown(1.);
    
@@ -281,8 +302,9 @@ int main(int argc, char **argv) {
     bool onlyNominal=false;
     systZero.setOnlyNominal(onlyNominal);
 
+    bool addJES=true,addJER=false;
     bool addPDF=false,addQ2=false,addTopPt=false,addVHF=false,addTTSplit=false;
-    addQ2=true;addPDF=true;
+    //    addQ2=true;addPDF=true;
     if(sample=="TT"){
         addTTSplit=false;
         }
@@ -291,7 +313,7 @@ int main(int argc, char **argv) {
         doTtoSDDecay=true;
         }
 
-    systZero.prepareDefault(true, addQ2, addPDF, addTopPt,addVHF,addTTSplit);
+    systZero.prepareDefault(true, addQ2, addPDF, addTopPt,addJES,addJER,addVHF,addTTSplit);
     //Here must add all systematics we want to put there so that the size of the syst vector is set
 
     //this maxSysts is to set the number of systematics we do want IMPORTANT FOR ALL INITIALIZATIONS
@@ -307,7 +329,9 @@ int main(int argc, char **argv) {
     //addWZNLO=false;
     //if(isData=="DATA"){addPDF=false, addQ2=false;addVHF=false;addTTSplit=false;} 
 
-    if(isData=="MC"){
+      cout << w<<endl;
+      if(isData=="MC"){
+
         chain.SetBranchAddress("Event_LHEWeight0", &w_zero); 
         }
     
@@ -386,10 +410,62 @@ int main(int argc, char **argv) {
       chain.SetBranchAddress("jetsAK4CHSTight_CorrPt",     &jetPt);
     }
     else{
-      chain.SetBranchAddress("jetsAK4CHSTight_E",      &jetE);
-      chain.SetBranchAddress("jetsAK4CHSTight_Pt",     &jetPt);
+      chain.SetBranchAddress("jetsAK4CHSTight_CorrE",      &jetE);
+      chain.SetBranchAddress("jetsAK4CHSTight_CorrPt",     &jetPt);
     }
     //    chain.SetBranchAddress("jetsAK4CHSTight_CorrPt",     &jetPt);
+
+    vector<string>scenarios;
+    scenarios.push_back("nominal");
+    
+    //    addJES=false;
+    if(addJES){
+      scenarios.push_back("jesUp");
+      scenarios.push_back("jesDown");
+
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_size",      &jetJesUpSize);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_size",      &jetJesDownSize);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrE",      &jetJesUpE);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrE",      &jetJesDownE);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt",      &jetJesUpPt);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt",      &jetJesDownPt);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_Eta",      &jetJesUpEta);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_Eta",      &jetJesDownEta);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_Phi",      &jetJesUpPhi);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_Phi",      &jetJesDownPhi);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_IsCSVT",      &jetJesUpIsCSVT);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_IsCSVT",      &jetJesDownIsCSVT);
+
+      chain.SetBranchAddress(("jetsAK4CHSTightJESUp_Is"+btagalgo).c_str(),  &jetJesUpPassesB);
+      chain.SetBranchAddress(("jetsAK4CHSTightJESUp_CorrPt_20_Is"+btagalgo).c_str(),  &jet20JesUpPassesB);
+
+     chain.SetBranchAddress(("jetsAK4CHSTightJESDown_Is"+btagalgo).c_str(),  &jetJesDownPassesB);
+     chain.SetBranchAddress(("jetsAK4CHSTightJESDown_CorrPt_20_Is"+btagalgo).c_str(),  &jet20JesDownPassesB);
+     // // //
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt_20_size",      &jet20JesUpSize);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt_20_size",      &jet20JesDownSize);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt_20_CorrE",      &jet20JesUpE);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt_20_CorrE",      &jet20JesDownE);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt_20_CorrPt",      &jet20JesUpPt);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt_20_CorrPt",      &jet20JesDownPt);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt_20_Eta",      &jet20JesUpEta);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt_20_Eta",      &jet20JesDownEta);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt_20_Phi",      &jet20JesUpPhi);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt_20_Phi",      &jet20JesDownPhi);
+      chain.SetBranchAddress("jetsAK4CHSTightJESUp_CorrPt_20_IsCSVT",      &jet20JesUpIsCSVT);
+      chain.SetBranchAddress("jetsAK4CHSTightJESDown_CorrPt_20_IsCSVT",      &jet20JesDownIsCSVT);
+
+
+      chain.SetBranchAddress(("jetsAK4CHSTightJESDown_CorrPt_20_"+btagvarname).c_str(),  &jet20JesDownak4chs_csvv2);
+      chain.SetBranchAddress(("jetsAK4CHSTightJESDown_CorrPt_20_reshapeFactor"+btagreshapename).c_str(),  &jet20JesDownReshapeFactorCSV);
+      chain.SetBranchAddress(("jetsAK4CHSTightJESDown_CorrPt_20_reshapeFactor"+btagreshapename+"_SD").c_str(),  &jet20JesDownReshapeFactorCSV_SD);
+
+      chain.SetBranchAddress(("jetsAK4CHSTightJESUp_CorrPt_20_"+btagvarname).c_str(),  &jet20JesUpak4chs_csvv2);
+      chain.SetBranchAddress(("jetsAK4CHSTightJESUp_CorrPt_20_reshapeFactor"+btagreshapename).c_str(),  &jet20JesUpReshapeFactorCSV);
+      chain.SetBranchAddress(("jetsAK4CHSTightJESUp_CorrPt_20_reshapeFactor"+btagreshapename+"_SD").c_str(),  &jet20JesUpReshapeFactorCSV_SD);
+
+
+    }
     chain.SetBranchAddress("jetsAK4CHSTight_Phi",    &jetPhi);
     chain.SetBranchAddress("jetsAK4CHSTight_Eta",    &jetEta);
     chain.SetBranchAddress("jetsAK4CHSTight_size",   &jetSize);
@@ -439,10 +515,8 @@ int main(int argc, char **argv) {
     //    chain.SetBranchAddress("jetsAK4CHSTight_CorrPt_20_reshapeFactorCSV_SD",  &jet20ReshapeFactorCMVA_SD);
 
     
-
     chain.SetBranchAddress("jetsAK4CHSTight_CorrPt_20_HadronFlavour", &jet20HadronFlavour);
     chain.SetBranchAddress("jetsAK4CHSTight_CorrPt_20_PartonFlavour",  &jet20PartonFlavour);  
-
 
     chain.SetBranchAddress("Event_RunNumber", &runNumber);
     chain.SetBranchAddress("Event_LumiBlock", &lumiSec);
@@ -606,6 +680,7 @@ int main(int argc, char **argv) {
 
     float * mtw_2j1t_mtwcut = new float(-999.0); namesToVars["mtw"] = mtw_2j1t_mtwcut;
     float * met_2j1t_mtwcut = new float(-999.0); namesToVars["MET"] = met_2j1t_mtwcut;
+    float * event_2j1t_mtwcut = new float(-999.0); 
 
     //Hipster variables
     float * mindeltaphi_2j1t_mtwcut = new float(-999.0); namesToVars["mindeltaphi"] = mindeltaphi_2j1t_mtwcut;
@@ -670,6 +745,7 @@ int main(int argc, char **argv) {
 
 
       syst1BM.branchTreesSysts(trees1T,"2j1t_mtwcut","w", outTreeFile, w_2j1t_mtwcut);
+      syst1BM.branchTreesSysts(trees1T,"2j1t_mtwcut","event", outTreeFile, event_2j1t_mtwcut);
       syst1BM.branchTreesSysts(trees1T,"2j1t_mtwcut","bdt_st_vs_vj", outTreeFile, bdt_st_vs_vj_2j1t_mtwcut);
       syst1BM.branchTreesSysts(trees1T,"2j1t_mtwcut","bdt_st_vs_tt", outTreeFile, bdt_st_vs_tt_2j1t_mtwcut);
 
@@ -920,13 +996,13 @@ int main(int argc, char **argv) {
   TH1F *h_3j1t_MuPhi[maxSysts];    systZero.initHistogramsSysts(h_3j1t_MuPhi,   "h_3j1t_MuPhi",   "muon phi ",100, -3.2, 3.2);
   TH1F *h_3j1t_MuE[maxSysts];      systZero.initHistogramsSysts(h_3j1t_MuE,     "h_3j1t_MuE",     "muon e ",250,0,500);
   TH1F *h_3j1t_mtw[maxSysts];      systZero.initHistogramsSysts(h_3j1t_mtw,     "h_3j1t_mtw",     "3j1t mtw ",250,0,500);
-   TH1F *h_3j1t_dR_lepjetpt40_1st[maxSysts];      systZero.initHistogramsSysts(h_3j1t_dR_lepjetpt40_1st,   "h_3j1t_dR_lepjetpt40_1st",  "dR lep-jet ",50,0,10);
-   TH1F *h_3j1t_dPhi_lepjetpt40_1st[maxSysts];    systZero.initHistogramsSysts(h_3j1t_dPhi_lepjetpt40_1st, "h_3j1t_dPhi_lepjetpt40_1st",  "dPhi lep-jet ",100,0.0,3.2);
-   TH1F *h_3j1t_dEta_lepjetpt40_1st[maxSysts];    systZero.initHistogramsSysts(h_3j1t_dEta_lepjetpt40_1st, "h_3j1t_dEta_lepjetpt40_1st",  "dPhi lep-jet ",50,-3.2,3.2);
-   TH1F *h_3j1t_muIso[maxSysts];          systZero.initHistogramsSysts(h_3j1t_muIso,"h_3j1t_muIso","Muon Isolation",100,0,1);
-   TH1F *h_3j1t_mtwcut_MuPt[maxSysts];     systZero.initHistogramsSysts(h_3j1t_mtwcut_MuPt,    "h_3j1t_mtwcut_MuPt",    "muon pt ",500,0,500);
-   TH1F *h_3j1t_mtwcut_muIso[maxSysts];          systZero.initHistogramsSysts(h_3j1t_mtwcut_muIso,"h_3j1t_mtwcut_muIso","Muon Isolation with mtwcut",100,0,1);
- 
+  TH1F *h_3j1t_dR_lepjetpt40_1st[maxSysts];      systZero.initHistogramsSysts(h_3j1t_dR_lepjetpt40_1st,   "h_3j1t_dR_lepjetpt40_1st",  "dR lep-jet ",50,0,10);
+  TH1F *h_3j1t_dPhi_lepjetpt40_1st[maxSysts];    systZero.initHistogramsSysts(h_3j1t_dPhi_lepjetpt40_1st, "h_3j1t_dPhi_lepjetpt40_1st",  "dPhi lep-jet ",100,0.0,3.2);
+  TH1F *h_3j1t_dEta_lepjetpt40_1st[maxSysts];    systZero.initHistogramsSysts(h_3j1t_dEta_lepjetpt40_1st, "h_3j1t_dEta_lepjetpt40_1st",  "dPhi lep-jet ",50,-3.2,3.2);
+  TH1F *h_3j1t_muIso[maxSysts];          systZero.initHistogramsSysts(h_3j1t_muIso,"h_3j1t_muIso","Muon Isolation",100,0,1);
+  TH1F *h_3j1t_mtwcut_MuPt[maxSysts];     systZero.initHistogramsSysts(h_3j1t_mtwcut_MuPt,    "h_3j1t_mtwcut_MuPt",    "muon pt ",500,0,500);
+  TH1F *h_3j1t_mtwcut_muIso[maxSysts];          systZero.initHistogramsSysts(h_3j1t_mtwcut_muIso,"h_3j1t_mtwcut_muIso","Muon Isolation with mtwcut",100,0,1);
+  
   TH1F *h_3j1t_jetpt40_1st[maxSysts];    systZero.initHistogramsSysts(h_3j1t_jetpt40_1st,   "h_3j1t_jetpt40_1st","3j1t leading jet Pt", 250,0,500);
   TH1F *h_3j1t_jetpt40_2nd[maxSysts];    systZero.initHistogramsSysts(h_3j1t_jetpt40_2nd,   "h_3j1t_jetpt40_2nd","3j1t 2nd leading jet Pt", 250,0,500);
   TH1F *h_3j1t_jetpt40_3rd[maxSysts];    systZero.initHistogramsSysts(h_3j1t_jetpt40_3rd,   "h_3j1t_jetpt40_3rd","3j1t 3rd leading jet Pt", 250,0,500);
@@ -1000,6 +1076,9 @@ int main(int argc, char **argv) {
         cout<<"Info: Running on event: "<<evt<<endl; 
         }
     chain.GetEntry(evt);
+    
+    //    if (evtNumber!=1751573)continue;
+    //    cout << "found it!"<<endl;
     int maxJetLoop = min(15, jetSize);
     int maxJet20Loop = min(15, jet20Size);
     
@@ -1065,13 +1144,17 @@ int main(int argc, char **argv) {
 
     //cout << "uffa4 "<<endl;
     if(isData=="MC"){
-        LHEWeightSign[0]=w_zero/fabs(w_zero);
-        w = LHEWeightSign[0];
+      //cout <<" step 1 "<< w<<" wzero "<< w_zero<< " LHEWeightSign "<< LHEWeightSign[0] << endl;
+      LHEWeightSign[0]=w_zero;
+      if(w_zero!=0) LHEWeightSign[0]=w_zero/fabs(w_zero);
+      w = LHEWeightSign[0];
         //    w=1.;
-        w_pu = LumiWeights_.weight(numTrueInt);
-        //cout << " ntrueint "<< numTrueInt <<" puweight "<<w_pu<<endl;
+      
+	//cout <<" step 2 "<< w<<endl;
+	w_pu = LumiWeights_.weight(numTrueInt);
+	//	cout << " ntrueint "<< numTrueInt <<" puweight "<<w_pu<<endl;
         //w_pu =1;
-
+	
         w = w * w_pu;
         //w = w  w_pu;
     if(sample=="TTNoTT"){
@@ -1084,7 +1167,6 @@ int main(int argc, char **argv) {
         }
         //cout << " ntrueint "<< numTrueInt <<" puweight "<<w_pu<<" wup "<< puUpFact<<" wdown "<<puDownFact<<endl;
         } 
-
     //if(numTrueInt>49){
     //  cout << " --> numTrueInt very high!!" << endl;
     //  puUpFact =0;
@@ -1212,15 +1294,17 @@ int main(int argc, char **argv) {
         
         lepWeight1Mu = (lepWeightBCDEF1Mu*lumi_bcdef + lepWeightGH1Mu*lumi_gh)/(lumi_bcdef + lumi_gh);
 
-        float errMu_BCDEF = muTightTrigEff_BCDEF.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt())*
-                            muTightIdSF_BCDEF.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt())*
-                            muTightIsoSF_BCDEF.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt());
+        float errMu_BCDEF = sqrt(pow(muTightTrigEff_BCDEF.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt()),2)+
+				 pow(muTightIdSF_BCDEF.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt()),2)+
+				 pow(muTightIsoSF_BCDEF.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt()),2));
        
-        float errMu_GH = muTightTrigEff_GH.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt())*
-                         muTightIdSF_GH.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt())*
-                         muTightIsoSF_GH.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt());
+        float errMu_GH = sqrt(pow(muTightTrigEff_GH.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt()),2)+
+			      pow(muTightIdSF_GH.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt()),2)+
+			      pow(muTightIsoSF_GH.getErr(fabs(tightMu.at(0).Eta()),tightMu.at(0).Pt()),2));
         
         float errMu = sqrt(pow(errMu_BCDEF,2)+pow(errMu_GH,2));
+	
+	//	cout << " lepWeight1Mu " <<lepWeight1Mu << " errmu "<<errMu<<endl; 
 
         lepWeight1MuLepUp=lepWeight1Mu+errMu;
         lepWeight1MuLepDown=lepWeight1Mu-errMu;
@@ -1265,78 +1349,98 @@ int main(int argc, char **argv) {
     if(channel=="muon" || channel == "muonantiiso")for (size_t m =0;m<tightMu.size();++m){tightLep.push_back(tightMu.at(m));}
     if(channel=="electron")for (size_t e =0;e<tightEl.size();++e){tightLep.push_back(tightEl.at(e));}
   
-    //cout << "uffa8 "<<endl;
-    systZero.setWeight(0,1.);
-    systZero.setWeight("btagUp",1.);
-    systZero.setWeight("btagDown",1.);
-    systZero.setWeight("mistagUp",1.);
-    systZero.setWeight("mistagDown",1.);
-    systZero.setWeight("puDown",1.);
-    systZero.setWeight("puUp",1.);
-    systZero.setWeight("lepDown",1.);
-    systZero.setWeight("lepUp",1.);
-    
-    if(addPDF)systZero.setPDFWeights(w_pdfs,nPDF,w_zero,true);
-    if(addQ2)systZero.setQ2Weights(w_q2up,w_q2down,w_zero,true);
-    if(addTopPt)systZero.setTWeight(w_top,topWeight,true);
-    
-    syst0BM.copySysts(systZero);
-    syst0BM.setWeight(0,bWeight0CSVM);
-    syst0BM.setWeight("btagUp",bWeight0CSVMBTagUp);
-    syst0BM.setWeight("btagDown",bWeight0CSVMBTagDown);
-    syst0BM.setWeight("mistagUp",bWeight0CSVMMisTagUp);
-    syst0BM.setWeight("mistagDown",bWeight0CSVMMisTagDown);
-    syst0BM.setWeight("puUp",bWeight0CSVM*puUpFact);
-    syst0BM.setWeight("puDown",bWeight0CSVM*puDownFact);
-    syst0BM.setWeight("lepUp",bWeight0CSVM*sf_lepUp);
-    syst0BM.setWeight("lepDown",bWeight0CSVM*sf_lepDown);
-    
-    syst1BM.copySysts(systZero);
-    syst1BM.setWeight(0,bWeight1CSVM);
-    syst1BM.setWeight("btagUp",bWeight1CSVMBTagUp);
-    syst1BM.setWeight("btagDown",bWeight1CSVMBTagDown);
-    syst1BM.setWeight("mistagUp",bWeight1CSVMMisTagUp);
-    syst1BM.setWeight("mistagDown",bWeight1CSVMMisTagDown);
-    
-    syst1BM.setWeight("lepUp",bWeight1CSVM*sf_lepUp);
-    syst1BM.setWeight("lepDown",bWeight1CSVM*sf_lepDown);
-    
-    syst2BM.copySysts(systZero);
-    syst2BM.setWeight(0,bWeight2CSVM);
-    syst2BM.setWeight("btagUp",bWeight2CSVMBTagUp);
-    syst2BM.setWeight("btagDown",bWeight2CSVMBTagDown);
-    syst2BM.setWeight("mistagUp",bWeight2CSVMMisTagUp);
-    syst2BM.setWeight("mistagDown",bWeight2CSVMMisTagDown);
-    syst2BM.setWeight("puUp",bWeight2CSVM*puUpFact);
-    syst2BM.setWeight("puDown",bWeight2CSVM*puDownFact);
-    syst2BM.setWeight("lepUp",bWeight2CSVM*sf_lepUp);
-    syst2BM.setWeight("lepDown",bWeight2CSVM*sf_lepDown);
 
-    if(addPDF){
-      syst0BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
-      syst1BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
-      syst2BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+        
+    for (size_t scen=0; scen<scenarios.size();++scen){
+      string scenario=scenarios.at(scen);
       
-    }
-    if(addQ2){
-      syst0BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
-      syst1BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
-      syst2BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+      if(scenario=="jesUp"){ maxJetLoop = min(15, jetJesUpSize);maxJet20Loop = min(15, jet20JesUpSize); }
+      else if(scenario=="jesDown"){ maxJetLoop = min(15, jetJesDownSize);maxJet20Loop = min(15, jet20JesDownSize); }
+      else {
+	maxJetLoop = min(15, jetSize);
+	maxJet20Loop = min(15, jet20Size);
+      }
+      //cout << "uffa8 "<<endl;
+      systZero.setWeight(0,1.);
+      systZero.setWeight("btagUp",1.);
+      systZero.setWeight("btagDown",1.);
+      systZero.setWeight("mistagUp",1.);
+      systZero.setWeight("mistagDown",1.);
+      systZero.setWeight("puDown",1.);
+      systZero.setWeight("puUp",1.);
+      systZero.setWeight("lepDown",1.);
+      systZero.setWeight("lepUp",1.);
       
-    }
-    if(addTopPt){
-      syst0BM.setTWeight(w_top,topWeight,true);
-      syst1BM.setTWeight(w_top,topWeight,true);
-      syst2BM.setTWeight(w_top,topWeight,true);
-    }
-
+      systZero.setScenario(scenario);
+      systZero.setEventBasedDefault();
+      
+      if(addPDF)systZero.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+      if(addQ2)systZero.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+      if(addTopPt)systZero.setTWeight(w_top,topWeight,true);
+      
+      syst0BM.copySysts(systZero);
+      syst0BM.setWeight(0,bWeight0CSVM);
+      syst0BM.setWeight("btagUp",bWeight0CSVMBTagUp);
+      syst0BM.setWeight("btagDown",bWeight0CSVMBTagDown);
+      syst0BM.setWeight("mistagUp",bWeight0CSVMMisTagUp);
+      syst0BM.setWeight("mistagDown",bWeight0CSVMMisTagDown);
+      syst0BM.setWeight("puUp",bWeight0CSVM*puUpFact);
+      syst0BM.setWeight("puDown",bWeight0CSVM*puDownFact);
+      syst0BM.setWeight("lepUp",bWeight0CSVM*sf_lepUp);
+      syst0BM.setWeight("lepDown",bWeight0CSVM*sf_lepDown);
     
+      syst1BM.copySysts(systZero);
+      syst1BM.setWeight(0,bWeight1CSVM);
+      syst1BM.setWeight("btagUp",bWeight1CSVMBTagUp);
+      syst1BM.setWeight("btagDown",bWeight1CSVMBTagDown);
+      syst1BM.setWeight("mistagUp",bWeight1CSVMMisTagUp);
+      syst1BM.setWeight("mistagDown",bWeight1CSVMMisTagDown);
+      syst1BM.setWeight("puUp",bWeight1CSVM*puUpFact);
+      syst1BM.setWeight("puDown",bWeight1CSVM*puDownFact);
+      syst1BM.setWeight("lepUp",bWeight1CSVM*sf_lepUp);
+      syst1BM.setWeight("lepDown",bWeight1CSVM*sf_lepDown);
+    
+      syst2BM.copySysts(systZero);
+      syst2BM.setWeight(0,bWeight2CSVM);
+      syst2BM.setWeight("btagUp",bWeight2CSVMBTagUp);
+      syst2BM.setWeight("btagDown",bWeight2CSVMBTagDown);
+      syst2BM.setWeight("mistagUp",bWeight2CSVMMisTagUp);
+      syst2BM.setWeight("mistagDown",bWeight2CSVMMisTagDown);
+      syst2BM.setWeight("puUp",bWeight2CSVM*puUpFact);
+      syst2BM.setWeight("puDown",bWeight2CSVM*puDownFact);
+      syst2BM.setWeight("lepUp",bWeight2CSVM*sf_lepUp);
+      syst2BM.setWeight("lepDown",bWeight2CSVM*sf_lepDown);
+      
+      if(addPDF){
+	syst0BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+	syst1BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+	syst2BM.setPDFWeights(w_pdfs,nPDF,w_zero,true);
+	
+      }
+      if(addQ2){
+	syst0BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+	syst1BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+	syst2BM.setQ2Weights(w_q2up,w_q2down,w_zero,true);
+	
+      }
+      if(addTopPt){
+	syst0BM.setTWeight(w_top,topWeight,true);
+	syst1BM.setTWeight(w_top,topWeight,true);
+	syst2BM.setTWeight(w_top,topWeight,true);
+      }
+      
+      systZero.setEventBasedDefault();
+      syst0BM.setEventBasedDefault();
+      syst1BM.setEventBasedDefault();
+      syst2BM.setEventBasedDefault();
+      
     vector<float> jetsPhi;
     
     vector<TLorentzVector> bjets, jets_nob, jets, jets20, jets_nob20, bjets20;    
 
     struct btag{
         TLorentzVector vect;
+        int passesB;
         float csv;
         float csvreweight;
         float csvreweightsd;
@@ -1344,7 +1448,7 @@ int main(int argc, char **argv) {
         float hadronFlavour;
         };
   
-    std::vector<btag> bvects,extrajets;
+    std::vector<btag> bvects,standardjets,extrajets;
     struct by_csv{
         bool operator()(btag const &b1, btag const &b2){
             return b1.csv > b2.csv;
@@ -1352,40 +1456,57 @@ int main(int argc, char **argv) {
         };
 
 
+
     struct by_pt_jet{
         bool operator()(btag const &jet1, btag const &jet2){
         return jet2.vect.Pt() < jet2.vect.Pt();
         }
     };
-  
+    //    vector<string>scenarios;
+    // 
+    //    scenarios.push_back("nominal");
+    //    scenarios.push_back("jesUp");
+    //    
+    //    for (int scen=0; scen<scenarios.size();++scen){
+    //      string scenario=scenarios.at(scen);
     for (int j = 0; j <maxJet20Loop;++j){
-        //     cout <<" in j20 loop"<<endl;
-        TLorentzVector jet20;
-	jet20.SetPtEtaPhiE(jet20Pt[j], jet20Eta[j], jet20Phi[j], jet20E[j]);
-	bool btagcond=jet20PassesB[j]>0.&&fabs(jet20Eta[j])<2.4;
+      //     cout <<" in j20 loop"<<endl;
+      TLorentzVector jet20;
+      float jetLocEta=jet20Eta[j], jetLocPt=jet20Pt[j], jetLocPhi=jet20Phi[j], jetLocE=jet20E[j], jetLocPassesB=jet20PassesB[j],jetLocak4chs_csvv2=jet20ak4chs_csvv2[j],jetLocReshapeFactorCSV=jet20ReshapeFactorCSV[j],jetLocReshapeFactorCSV_SD=jet20ReshapeFactorCSV_SD[j],jetLocPartonFlavour=jet20PartonFlavour[j];
+
+      if(scenario=="jesUp"){jetLocEta=jet20JesUpEta[j];jetLocPt=jet20JesUpPt[j]; jetLocPhi=jet20JesUpPhi[j]; jetLocE=jet20JesUpE[j]; jetLocPassesB=jet20JesUpPassesB[j]; jetLocak4chs_csvv2=jet20JesUpak4chs_csvv2[j];jetLocReshapeFactorCSV=jet20JesUpReshapeFactorCSV[j];jetLocReshapeFactorCSV_SD=jet20JesUpReshapeFactorCSV_SD[j];jetLocPartonFlavour=jet20JesUpPartonFlavour[j];}
+      if(scenario=="jesDown"){jetLocEta=jet20JesDownEta[j];jetLocPt=jet20JesDownPt[j]; jetLocPhi=jet20JesDownPhi[j]; jetLocE=jet20JesDownE[j]; jetLocPassesB=jet20JesDownPassesB[j]; jetLocak4chs_csvv2=jet20JesDownak4chs_csvv2[j];jetLocReshapeFactorCSV=jet20JesDownReshapeFactorCSV[j];jetLocReshapeFactorCSV_SD=jet20JesDownReshapeFactorCSV_SD[j];jetLocPartonFlavour=jet20JesDownPartonFlavour[j];}
+	//      if(scenario=="jesDown"){jetLocEta=jet20JesDownEta[j], jetLocPt=jet20JesDownPt[j], jetLocPhi=jet20JesDownPhi[j], jetLocE=jet20JesDownE[j], jetLocPassesB=jet20JesDownPassesB[j],jetLocak4chs_csvv2=jet20JesDownak4chs_csvv2[j];}
+
+	jet20.SetPtEtaPhiE(jetLocPt, jetLocEta, jetLocPhi, jetLocE);
+	bool btagcond=jetLocPassesB>0.&&fabs(jetLocEta)<2.4;
 	if(btagcond)bjets20.push_back(jet20);
 	else jets_nob20.push_back(jet20);
 	
-	if(jet20Pt[j]<40 && fabs(jet20Eta[j])<2.4){
-            //cout <<" # j= "<<j<< " pt "<< jet20Pt[j] <<endl;
+	if(jetLocPt<40 && fabs(jetLocEta)<2.4){
+            //cout <<" # j= "<<j<< " pt "<< jet20Pt <<endl;
             jets20.push_back(jet20);
             btag bj;
             bj.vect = jet20;
-            bj.csv = jet20ak4chs_csvv2[j];
-            bj.csvreweight = jet20ReshapeFactorCSV[j];
-            bj.csvreweightsd = 1.;//jet20ak4chsReweightFactorCSV_SD[j];
+            bj.csv = jetLocak4chs_csvv2;
+            bj.csvreweight = jetLocReshapeFactorCSV;
+            bj.csvreweightsd = 1.;//jet20:ak4chsReweightFactorCSV_SD[j];
             if( doTtoSDDecay){
-                bj.csvreweightsd = jet20ReshapeFactorCSV_SD[j];
-		bj.partonFlavour=jet20PartonFlavour[j];
+                bj.csvreweightsd = jetLocReshapeFactorCSV_SD;
+		bj.partonFlavour=jetLocPartonFlavour;
 	    }
             extrajets.push_back(bj);
             }
         }
    
-    //cout << "uffa9 "<<endl;
+    //cout <<endl;
     for (int j = 0; j <maxJetLoop;++j){
         TLorentzVector jet, all_jets;
-        all_jets.SetPtEtaPhiE(jetPt[j], jetEta[j], jetPhi[j], jetE[j]);
+	float jetLocEta=jetEta[j], jetLocPt=jetPt[j], jetLocPhi=jetPhi[j], jetLocE=jetE[j], jetLocPassesB=jetPassesB[j],jetLocak4chs_csvv2=jetak4chs_csvv2[j];
+	if(scenario=="jesUp"){jetLocEta=jetJesUpEta[j], jetLocPt=jetJesUpPt[j], jetLocPhi=jetJesUpPhi[j], jetLocE=jetJesUpE[j], jetLocPassesB=jetJesUpPassesB[j],jetLocak4chs_csvv2=jetJesUpak4chs_csvv2[j];}
+	if(scenario=="jesDown"){jetLocEta=jetJesDownEta[j], jetLocPt=jetJesDownPt[j], jetLocPhi=jetJesDownPhi[j], jetLocE=jetJesDownE[j], jetLocPassesB=jetJesDownPassesB[j],jetLocak4chs_csvv2=jetJesDownak4chs_csvv2[j];}
+	all_jets.SetPtEtaPhiE(jetLocPt, jetLocEta, jetLocPhi, jetLocE);
+	
 
         bool passesDR=true;
         double dR=0; 
@@ -1393,7 +1514,6 @@ int main(int argc, char **argv) {
 	
       if(channel=="muonantiiso"){
 	    for (size_t i = 0; i<(size_t)tightMu.size();++i){
-	    //dR = deltaR(jetEta[j],jetPhi[j],tightMu[i].Eta(),tightMu[i].Phi());   
 	    dR= deltaR(all_jets.Eta(),all_jets.Phi(),tightMu[i].Eta(),tightMu[i].Phi());
 	    if (dR<0.4) passesDR=false; //throw away the jet if deltaR btw jet and tightmu in less than 0.4
 	    }
@@ -1404,35 +1524,35 @@ int main(int argc, char **argv) {
 	  } 
 	//	passesDR=true;
 	if(!passesDR)continue;
-	//cout <<"Evt No. after "<<evt<<"   "<<"jet["<<j<< "] "<<jetPt[j]<< " dR(jet,mu) "<< dR <<endl;
 	
 	jets.push_back(all_jets);
-	//     bool btagcond = jetIsCSVM[j]>0.;
 	//if(useCSVTSelection){
-	//bool btagcond = jetPassesB[j]>0.;
-	bool btagcond = jetPassesB[j]>0. && fabs(jetEta[j])<2.4;
+	//bool btagcond = jetPassesB>0.;
+	bool btagcond = jetLocPassesB>0. && fabs(jetLocEta)<2.4;
 	
 	// }
      
-     if(!btagcond){
-         jet.SetPtEtaPhiE(jetPt[j], jetEta[j], jetPhi[j], jetE[j]);
-         jets_nob.push_back(jet);
+	if(!btagcond){
+	  jet.SetPtEtaPhiE(jetLocPt, jetLocEta, jetLocPhi, jetLocE);
+	  jets_nob.push_back(jet);
      }
      
-     jetsPhi.push_back(jetPhi[j]);
+     jetsPhi.push_back(jetLocPhi);
      TLorentzVector bjet;
      
-     if( btagcond && fabs(jetEta[j])<2.4){
-       bjet.SetPtEtaPhiE(jetPt[j], jetEta[j], jetPhi[j], jetE[j]);
+     bjet.SetPtEtaPhiE(jetLocPt, jetLocEta, jetLocPhi, jetLocE);
+     btag b;
+     b.vect = bjet;
+     b.csv = jetLocak4chs_csvv2;
+     b.passesB = jetLocPassesB;
+     if( btagcond && fabs(jetLocEta)<2.4){
        bjets.push_back(bjet);
-       btag b;
-       b.vect = bjet;
-       b.csv = jetak4chs_csvv2[j];
        bvects.push_back(b);
      }
+     standardjets.push_back(b);
     }//End of jet loop
     
-    nJets = jetsPhi.size();
+    nJets = jets.size();
     nCSVJets=bjets.size();
     //  cout <<"passes trig "<<endl; 
     //  std::sort(jets20.begin(), jets20.end(), by_pt()); 
@@ -1445,10 +1565,10 @@ int main(int argc, char **argv) {
     bool passelectron = electronTrigger && nEl == 1 ;
 
     bool passlepton = (passmuon && ((channel=="muon" || channel=="muonantiiso"))) || ((passelectron && channel=="electron"));
-    if(passlepton  ==  true){n_lepton+=w;nev_lepton+=1;}
+    if(passlepton  ==  true ){n_lepton+=w;nev_lepton+=1;}
     //    cout << "nmuons "<<nMu<< " nloosemu "<< muLooseSize << " nlooseEl "<< elLooseSize <<endl;
     //    cout << "passlepton" <<passlepton;
-    if(doSynch && passlepton){
+    if(doSynch && passlepton && scenario=="nominal"){
       //RunNumber | EvtNumber | Lumi | #TightMu | #LooseMu | #LooseEl | #Jets | #BJets | TightMu Pt | TightMuRelIso | AddLoose.Mu Pt | Add.LooseEl Pt | 1stJetPt | 2ndJetPt | 1stB Dis.| 2ndB Dis.| MET | MTW | 
       //string spaces ="   ";
       //fileout_steP1<<std::fixed<<std::setprecision(0)<<runNumber<<"   "<<evtNumber<<"   "<<lumiSec<<"   "<<std::setprecision(4)<<muSize<<"   "<<muLooseSize<<"   "<<elLooseSize
@@ -1469,7 +1589,7 @@ int main(int argc, char **argv) {
     passlepton = passlepton && ( ( (channel=="muon" || channel=="muonantiiso") && elLooseSize == 0 ) || (channel =="electron" && muLooseSize==0) );
     //    cout << "passlepton after lep 2 step" <<passlepton;
     if(passlepton){n_lepton_cross_veto+=w;nev_lepton_cross_veto+=1;}
-    if(doSynch && passlepton){
+    if(doSynch && passlepton && scenario=="nominal"){
       fileout_step3<<std::fixed<<std::setprecision(0)<<evtNumber<<std::endl;
     }
     //cout << "uffa11 "<<endl;
@@ -1492,17 +1612,17 @@ int main(int argc, char **argv) {
     
     if(jets.size() ==2){
       n_2j+=w; nev_2j+=1;
-      if(doSynch){
+      if(doSynch && scenario=="nominal"){
 	fileout_step4<<std::fixed<<std::setprecision(0)<<evtNumber<<std::endl;
       }
     }
     
     if(jets.size() ==2 && bjets.size()==1){ n_2j1t+=w; nev_2j1t+=1;  
-      
-      if(doSynch){
+
+      if(doSynch && scenario=="nominal"){
 	fileout_step5<<std::fixed<<std::setprecision(0)<<evtNumber<<std::endl;
       }
-      if(doSynch){
+      if(doSynch&& scenario=="nominal"){
 	if((tightLep.size())==1){
 	  TVector2 met_( met*cos(metPhi[0]), met*sin(metPhi[0]));
 	  float phi_lmet = fabs(deltaPhi(tightLep[0].Phi(), metPhi[0]) );
@@ -1551,7 +1671,7 @@ int main(int argc, char **argv) {
                 syst0BM.fillHistogramsSysts(h_2j0t_dR_lepjetpt40_1st,deltaR(jets[j].Eta(),jets[j].Phi(),tightLep[0].Eta(),tightLep[0].Phi()),w);
                 syst0BM.fillHistogramsSysts(h_2j0t_dPhi_lepjetpt40_1st,fabs(deltaPhi(jets[j].Phi(),tightLep[0].Phi())),w);
                 syst0BM.fillHistogramsSysts(h_2j0t_dEta_lepjetpt40_1st,jets[j].Eta()-tightLep[0].Eta(),w);
-                syst0BM.fillHistogramsSysts(h_2j0t_MuPt,tightLep[0].Phi(),w);
+                syst0BM.fillHistogramsSysts(h_2j0t_MuPt,tightLep[0].Pt(),w);
                 }
       
             if(j==1)syst0BM.fillHistogramsSysts(h_2j0t_jetpt40_2nd,jets[j].Pt(),w);
@@ -1581,6 +1701,8 @@ int main(int argc, char **argv) {
     double etathreshold=2.5;
     //2j1t
     if((jets.size() == 2 && bjets.size() == 1)){
+      //      cout << "syst1BM "<< " scenario "<< scenario<< " weight zero " << syst1BM.weightedSysts[0]<< " alt "<< syst1BM.getSystValue(0)<<" weight jesUp "<< syst1BM.getSystValue("jesUp")<<endl;
+
       for(size_t j= 0; j< (size_t)jets.size();++j ){
 	if(j==0){
 	  syst1BM.fillHistogramsSysts(h_2j1t_dR_lepjetpt40_1st,deltaR(jets[j].Eta(),jets[j].Phi(),tightLep[0].Eta(),tightLep[0].Phi()),w);
@@ -1632,7 +1754,7 @@ int main(int argc, char **argv) {
 
     //define signal enriching condition:
     for (size_t j= 0; j< (size_t)jets.size();++j ){
-      bool btagcond = jetPassesB[j]>0. && fabs(jets[j].Eta())<2.4;
+      bool btagcond = standardjets[j].passesB>0. && fabs(jets[j].Eta())<2.4;
       //      if(useCSVTSelection){
       //          btagcond = jetIsCSVT[j]>0.;
       //          }
@@ -1648,7 +1770,7 @@ int main(int argc, char **argv) {
 	  syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_ljeteta,jets[j].Eta(),w);
 	  syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_etajprime,fabs(jets[j].Eta()),w);
 	}
-      } 
+      }
     }
     //    cout << " filling extrajets "<<endl;
     syst1BM.fillHistogramsSysts(h_2j1t_nextrajets,extrajets.size(),w);
@@ -1828,6 +1950,7 @@ int main(int argc, char **argv) {
     }
     if(qcddepleted){
       *w_2j1t_mtwcut=w;
+      *event_2j1t_mtwcut=evtNumber;
       if(doMVA){
 	for(size_t rd =0; rd < AllReaders.size();++rd){
 	  //cout<< " reader "<< AllReaderNames.at(rd)<< " value "<< endl;
@@ -1850,11 +1973,14 @@ int main(int argc, char **argv) {
 	  }
 	}
       }
+      //      cout << " w "<< *w_2j1t_mtwcut << " event "<<evt<<endl;
       if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t_mtwcut");
     }
     if(signalenriched && qcddepleted) {
-      *w_2j1t_mtwcut_sr=w;
-      if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t_mtwcut_sr");}
+
+    *w_2j1t_mtwcut_sr=w;
+      if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t_mtwcut_sr");
+    }
     //AOB for 2j1t?
     }
   //End 2j1t
@@ -1976,6 +2102,7 @@ int main(int argc, char **argv) {
   
   //To add here: 2l3j2t: 2 leptons, 3 jets, 2 tags for ttbar control
 
+    }
   //End signal and control regions.
 
   systZero.fillHistogramsSysts(h_nJets,nJets,w); 
