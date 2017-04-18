@@ -656,18 +656,43 @@ int main(int argc, char **argv) {
     if(addTrees){
     outTreeFile->cd();
     }
-    TTree * trees1T[6];
-    TTree * trees2T[3];
+    TTree * trees1T[9];
+    TTree * trees2T[6];
     //    float * flo = new float(1.0); 
     //    float * mtw_2j1t = new float(-999.0); 
     
     //
     //Standard selection: 2j1t + mtw cut
     map< string, float * >namesToVars;
+    
+     //Standard selection: 2j1t + nomtwcut
+     float * w_2j1t = new float(-999.0); 
+     float * etajprime_2j1t  = new float(-999.0); namesToVars["etajprime"] = etajprime_2j1t;
+     float * nextrajets_2j1t = new float(-999.0); namesToVars["nextrajets"] = nextrajets_2j1t;
+     
+     float * topMass_2j1t    = new float(-999.0); namesToVars["topMass"] = topMass_2j1t;
+     float * topY_2j1t = new float(-999.0); namesToVars["topY"] = topY_2j1t;
+     float * topPt_2j1t = new float(-999.0); namesToVars["topPt"] = topPt_2j1t;
+     float * topEta_2j1t = new float(-999.0); namesToVars["topEta"] = topEta_2j1t;
+ 
+     float * mlb_2j1t = new float(-999.0); namesToVars["mlb"] = mlb_2j1t;
+     float * mljprime_2j1t = new float(-999.0); namesToVars["mljprime"] = mljprime_2j1t;
+     float * mljextra_2j1t = new float(-999.0); namesToVars["mljextra"] = mljextra_2j1t;
+ 
+     float * mindeltaphi_2j1t = new float(-999.0); namesToVars["mindeltaphi"] = mindeltaphi_2j1t;
+     float * mindeltaphi20_2j1t = new float(-999.0); namesToVars["mindeltaphi20"] = mindeltaphi20_2j1t;
+     float * mt2w_2j1t = new float(-999.0); namesToVars["mt2w"] = mt2w_2j1t;
+     float * mtw_2j1t = new float(-999.0); namesToVars["mtw"] = mtw_2j1t;
+     float * met_2j1t = new float(-999.0); namesToVars["MET"] = met_2j1t;
+ 
+     float * bdt_st_vs_qcd_2j1t = new float(-999.0); 
+     
+
+
     float * w_2j1t_mtwcut = new float(-999.0); 
-    float * etajprime_2j1t_mtwcut = new float(-999.0); namesToVars["etajprime"] = etajprime_2j1t_mtwcut;
-    float * topMass_2j1t_mtwcut = new float(-999.0); namesToVars["topMass"] = topMass_2j1t_mtwcut;
-    float * nextrajets_2j1t_mtwcut = new float(-999.0); namesToVars["nextrajets"] = nextrajets_2j1t_mtwcut;
+    float * etajprime_2j1t_mtwcut = new float(-999.0);
+    float * topMass_2j1t_mtwcut = new float(-999.0); 
+    float * nextrajets_2j1t_mtwcut = new float(-999.0);
     
     //MVAS:
     //ST vs other:
@@ -678,19 +703,19 @@ int main(int argc, char **argv) {
     float * bdt_stsd_vs_st_2j1t_mtwcut = new float(-999.0); 
     float * bdt_stsd_vs_vj_2j1t_mtwcut = new float(-999.0); 
 
-    float * mtw_2j1t_mtwcut = new float(-999.0); namesToVars["mtw"] = mtw_2j1t_mtwcut;
-    float * met_2j1t_mtwcut = new float(-999.0); namesToVars["MET"] = met_2j1t_mtwcut;
+    float * mtw_2j1t_mtwcut = new float(-999.0); 
+    float * met_2j1t_mtwcut = new float(-999.0); 
     float * event_2j1t_mtwcut = new float(-999.0); 
 
     //Hipster variables
-    float * mindeltaphi_2j1t_mtwcut = new float(-999.0); namesToVars["mindeltaphi"] = mindeltaphi_2j1t_mtwcut;
-    float * mindeltaphi20_2j1t_mtwcut = new float(-999.0); namesToVars["mindeltaphi20"] = mindeltaphi20_2j1t_mtwcut;
-    float * mt2w_2j1t_mtwcut = new float(-999.0); namesToVars["mt2w"] = mt2w_2j1t_mtwcut;
+    float * mindeltaphi_2j1t_mtwcut = new float(-999.0);
+    float * mindeltaphi20_2j1t_mtwcut = new float(-999.0); 
+    float * mt2w_2j1t_mtwcut = new float(-999.0); 
     
     //Mass of lepton +jet
-    float * mlb_2j1t_mtwcut = new float(-999.0); namesToVars["mlb"] = mlb_2j1t_mtwcut;
-    float * mljprime_2j1t_mtwcut = new float(-999.0); namesToVars["mljprime"] = mljprime_2j1t_mtwcut;
-    float * mljextra_2j1t_mtwcut = new float(-999.0); namesToVars["mljextra"] = mljextra_2j1t_mtwcut;
+    float * mlb_2j1t_mtwcut = new float(-999.0); 
+    float * mljprime_2j1t_mtwcut = new float(-999.0); 
+    float * mljextra_2j1t_mtwcut = new float(-999.0); 
 
     //top 
     float * topPt_2j1t_mtwcut = new float(-999.0); namesToVars["topPt"] = topPt_2j1t_mtwcut;
@@ -735,6 +760,7 @@ int main(int argc, char **argv) {
     if(addTrees){
       cout << "adding trees "<<endl;
       //syst1BM.addSelection("3j1t_mtwcut");
+      syst1BM.addSelection("2j1t");
       syst1BM.addSelection("2j1t_mtwcut");
       syst1BM.addSelection("2j1t_mtwcut_sr");
       syst1BM.initTreesSysts(trees1T, outTreeFile);
@@ -742,6 +768,27 @@ int main(int argc, char **argv) {
       syst2BM.addSelection("3j2t");
       syst2BM.initTreesSysts(trees2T, outTreeFile);
       cout << " bef branch trees" <<endl;
+
+       //without mtw cut
+       syst1BM.branchTreesSysts(trees1T,"2j1t","w", outTreeFile, w_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","bdt_st_vs_qcd", outTreeFile, bdt_st_vs_qcd_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","etajprime", outTreeFile, etajprime_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","topMass",outTreeFile, topMass_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","topY",   outTreeFile, topY_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","topPt",  outTreeFile, topPt_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","topEta", outTreeFile, topEta_2j1t);
+ 
+       syst1BM.branchTreesSysts(trees1T,"2j1t","mlb", outTreeFile, mlb_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","mljprime", outTreeFile, mljprime_2j1t);
+ 
+       syst1BM.branchTreesSysts(trees1T,"2j1t","mt2w", outTreeFile, mt2w_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","mindeltaphi", outTreeFile, mindeltaphi_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","mindeltaphi20", outTreeFile, mindeltaphi20_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","mtw", outTreeFile, mtw_2j1t);
+       syst1BM.branchTreesSysts(trees1T,"2j1t","MET", outTreeFile, met_2j1t);
+       
+       syst1BM.branchTreesSysts(trees1T,"2j1t","nextrajets", outTreeFile, nextrajets_2j1t);
+
 
 
       syst1BM.branchTreesSysts(trees1T,"2j1t_mtwcut","w", outTreeFile, w_2j1t_mtwcut);
@@ -972,6 +1019,7 @@ int main(int argc, char **argv) {
   TH1F *h_2j1t_mtwcut_sr_topMassExtra_sd_b[maxSysts];  systZero.initHistogramsSysts(h_2j1t_mtwcut_sr_topMassExtra_sd_b, "h_2j1t_mtwcut_sr_topMassExtra_sd_b", "2j1t top mass with the first extra jet as b",200,100,500);
   
   //BDT plots 
+  TH1F *h_2j1t_BDT_STvsQCDMu[maxSysts]; systZero.initHistogramsSysts(h_2j1t_BDT_STvsQCDMu, "h_2j1t_BDT_STvsQCDMu", "BDT ST-vs-QCD 2j1t", 50, -1, 1);
   TH1F *h_2j1t_mtwcut_BDT_STvsVJ[maxSysts]; systZero.initHistogramsSysts(h_2j1t_mtwcut_BDT_STvsVJ, "h_2j1t_mtwcut_BDT_STvsVJ", "BDT ST-vs-VJ 2j1t with mtwcut", 50, -1, 1);
   TH1F *h_2j1t_mtwcut_BDT_STvsTT[maxSysts]; systZero.initHistogramsSysts(h_2j1t_mtwcut_BDT_STvsTT, "h_2j1t_mtwcut_BDT_STvsTT", "BDT ST-vs-VJ 2j1t with mtwcut", 50, -1, 1); 
   
@@ -1648,8 +1696,12 @@ int main(int argc, char **argv) {
     
 
     //cout << "uffa13 "<<endl;
-      
-  
+    systZero.fillHistogramsSysts(h_nJets,nJets,w); 
+    systZero.fillHistogramsSysts(h_nbJets,nCSVJets,w); 
+    systZero.fillHistogramsSysts(h_nPV,nPV,w);
+    systZero.fillHistogramsSysts(h_nGoodPV,nPV,w);
+    systZero.fillHistogramsSysts(h_nTruePV,numTrueInt,1);
+    
     //2j0t 
     if((jets.size() == 2 && bjets.size() == 0)){
       for(size_t i = 0; i < (size_t)tightLep.size();++i ){
@@ -1741,6 +1793,9 @@ int main(int argc, char **argv) {
             //cout <<" calculate_mtw() = "<<calculate_mtw(metPt, metPhi,tightLep)<<endl;     
             syst1BM.fillHistogramsSysts(h_2j1t_mtw,mt,w);
             if(channel=="muon" || channel == "muonantiiso")syst1BM.fillHistogramsSysts(h_2j1t_muIso,selectedIso[i],w);
+	    *mtw_2j1t = mt;
+	    *met_2j1t = met;
+
             if (calculate_mtw(metPt, metPhi,tightLep) > 50.0){
 	      *mtw_2j1t_mtwcut = mt;
 	      *met_2j1t_mtwcut = met;
@@ -1763,6 +1818,8 @@ int main(int argc, char **argv) {
 	syst1BM.fillHistogramsSysts(h_2j1t_ljeteta,jets[j].Eta(),w);
 	syst1BM.fillHistogramsSysts(h_2j1t_etajprime,fabs(jets[j].Eta()),w);
 	signalenriched=signalenriched||fabs(jets[j].Eta())>etathreshold;
+	*etajprime_2j1t = fabs(jets[j].Eta());
+	*mljprime_2j1t=topUtils.mlj(tightLep.at(0), jets.at(j));
 	if(qcddepleted) {
 	  *etajprime_2j1t_mtwcut = fabs(jets[j].Eta());
 	  *mljprime_2j1t_mtwcut=topUtils.mlj(tightLep.at(0), jets.at(j));
@@ -1810,13 +1867,15 @@ int main(int argc, char **argv) {
     //Adding top related variables
     vector<TLorentzVector> tops= topUtils.top4Momenta(tightLep, bjets ,metpx, metpy);
     
+    *mindeltaphi_2j1t = topUtils.mindeltaphi(metPhi[0],jets);
+    *mindeltaphi20_2j1t = topUtils.mindeltaphi(metPhi[0],jets20);
     *mindeltaphi_2j1t_mtwcut = topUtils.mindeltaphi(metPhi[0],jets);
     *mindeltaphi20_2j1t_mtwcut = topUtils.mindeltaphi(metPhi[0],jets20);
 
     TVector2 met( metpx, metpy);
     double Mt2w = Mt2cal->calculateMT2w(jets_nob20,bjets20,tightLep.at(0), met,"MT2w"); 
     *mt2w_2j1t_mtwcut = Mt2w;
-
+    *mt2w_2j1t = Mt2w;
 
 
     if(tops.size()!=0){
@@ -1824,6 +1883,12 @@ int main(int argc, char **argv) {
       double pt = tops.at(0).Pt();
 
       
+       *topMass_2j1t=mass;
+       *topY_2j1t=tops.at(0).Y();
+       *topPt_2j1t=pt;
+       *topEta_2j1t=tops.at(0).Eta();
+       *mlb_2j1t=topUtils.mlj(tightLep.at(0), bjets.at(0));
+
       
       *topMass_2j1t_mtwcut=mass;
       *topY_2j1t_mtwcut=tops.at(0).Y();
@@ -1846,6 +1911,7 @@ int main(int argc, char **argv) {
     }
     //Adding extra-jet related variables: only for QCD and signal enriched regions.
     //    cout << "tops ok"<<endl;
+    *nextrajets_2j1t=extrajets.size();
     if(qcddepleted){
        syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_nextrajets,extrajets.size(),w);
        *nextrajets_2j1t_mtwcut=extrajets.size();
@@ -1953,7 +2019,6 @@ int main(int argc, char **argv) {
       *event_2j1t_mtwcut=evtNumber;
       if(doMVA){
 	for(size_t rd =0; rd < AllReaders.size();++rd){
-	  //cout<< " reader "<< AllReaderNames.at(rd)<< " value "<< endl;
 	  //cout << AllReaders.at(rd)->EvaluateMVA("BDTG")<<endl;
 	  if(AllReaderNames.at(rd)==("ST_vs_VJ")) {
 	    *bdt_st_vs_vj_2j1t_mtwcut = AllReaders.at(rd)->EvaluateMVA("BDTG");
@@ -1981,6 +2046,16 @@ int main(int argc, char **argv) {
     *w_2j1t_mtwcut_sr=w;
       if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t_mtwcut_sr");
     }
+    *w_2j1t=w;
+    if(doMVA){
+      for(size_t rd =0; rd < AllReaders.size();++rd){
+	if(AllReaderNames.at(rd)==("ST_vs_QCDMu")) {
+	  *bdt_st_vs_qcd_2j1t = AllReaders.at(rd)->EvaluateMVA("BDTG"); 
+	  syst1BM.fillHistogramsSysts(h_2j1t_BDT_STvsQCDMu,*bdt_st_vs_qcd_2j1t,w);
+	}
+      }
+    }
+    if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t");
     //AOB for 2j1t?
     }
   //End 2j1t
@@ -1998,7 +2073,7 @@ int main(int argc, char **argv) {
     if(j==2){syst1BM.fillHistogramsSysts(h_3j1t_jetpt40_3rd,jets[j].Pt(),w); }
     }
   for(size_t b= 0; b< (size_t)bjets.size();++b ){
-  if(b==0)systZero.fillHistogramsSysts(h_3j1t_bjetpt,bjets[b].Pt(),w);
+  if(b==0)syst1BM.fillHistogramsSysts(h_3j1t_bjetpt,bjets[b].Pt(),w);
    } 
   for(size_t i = 0; i < (size_t)tightLep.size();++i ){
         syst1BM.fillHistogramsSysts(h_3j1t_MuPt,tightLep[i].Pt(),w);
@@ -2102,15 +2177,10 @@ int main(int argc, char **argv) {
   
   //To add here: 2l3j2t: 2 leptons, 3 jets, 2 tags for ttbar control
 
-    }
+  }
   //End signal and control regions.
-
-  systZero.fillHistogramsSysts(h_nJets,nJets,w); 
-  systZero.fillHistogramsSysts(h_nbJets,nCSVJets,w); 
-  systZero.fillHistogramsSysts(h_nPV,nPV,w);
-  systZero.fillHistogramsSysts(h_nGoodPV,nPV,w);
-//  systZero.fillHistogramsSysts(h_nTruePV,numTrueInt,1);
-  
+    
+      
   //if(nTightElectrons != nEl)cout << "warning! problem with tight el"<<endl;
   //if(nTightMuons != nMu)cout << "warning! problem with tight mu"<<endl;
   
