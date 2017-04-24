@@ -240,6 +240,9 @@ int main(int argc, char **argv) {
     float nTightMuons, nTightElectrons, nVetoElectrons, nLooseMuons, nJets,nCSVJets;//, nCSVLJets;
     float nGoodPV, nPV, numTrueInt, w_pu;
     float metPt[1],metPhi[1],metPx[1],metPy[1];
+    float metZeroPt[1],metZeroPhi[1],metZeroPx[1],metZeroPy[1];
+    float metJesUpPt[1],metJesUpPhi[1],metJesUpPx[1],metJesUpPy[1];
+    float metJesDownPt[1],metJesDownPhi[1],metJesDownPx[1],metJesDownPy[1];
     
     //double met,metpx,metpy;
     float met,metpx,metpy;
@@ -304,7 +307,8 @@ int main(int argc, char **argv) {
 
     bool addJES=true,addJER=false;
     bool addPDF=false,addQ2=false,addTopPt=false,addVHF=false,addTTSplit=false;
-    //    addQ2=true;addPDF=true;
+    //addQ2=true;addPDF=true;
+    //addJES=false;
     if(sample=="TT"){
         addTTSplit=false;
         }
@@ -415,10 +419,23 @@ int main(int argc, char **argv) {
     }
     //    chain.SetBranchAddress("jetsAK4CHSTight_CorrPt",     &jetPt);
 
+   if(isData=="MC"){
+        chain.SetBranchAddress("metFull_CorrT1Pt",metZeroPt);
+        chain.SetBranchAddress("metFull_CorrT1Phi",metZeroPhi);}
+    else {
+        chain.SetBranchAddress("metFull_CorrT1Pt",metZeroPt);
+        chain.SetBranchAddress("metFull_CorrT1Phi",metZeroPhi);}
+   
+
+    chain.SetBranchAddress("metFull_CorrT1Px",metZeroPx);
+    chain.SetBranchAddress("metFull_CorrT1Py",metZeroPy);
+
     vector<string>scenarios;
     scenarios.push_back("nominal");
     
-    //    addJES=false;
+ 
+
+   //    addJES=false;
     if(addJES){
       scenarios.push_back("jesUp");
       scenarios.push_back("jesDown");
@@ -464,6 +481,16 @@ int main(int argc, char **argv) {
       chain.SetBranchAddress(("jetsAK4CHSTightJESUp_CorrPt_20_reshapeFactor"+btagreshapename).c_str(),  &jet20JesUpReshapeFactorCSV);
       chain.SetBranchAddress(("jetsAK4CHSTightJESUp_CorrPt_20_reshapeFactor"+btagreshapename+"_SD").c_str(),  &jet20JesUpReshapeFactorCSV_SD);
 
+
+      chain.SetBranchAddress("metFull_CorrT1PtJESUp",metJesUpPt);
+      chain.SetBranchAddress("metFull_CorrT1PhiJESUp",metJesUpPhi);
+      chain.SetBranchAddress("metFull_CorrT1PxJESUp",metJesUpPx);
+      chain.SetBranchAddress("metFull_CorrT1PyJESUp",metJesUpPy);
+
+      chain.SetBranchAddress("metFull_CorrT1PtJESDown",metJesDownPt);
+      chain.SetBranchAddress("metFull_CorrT1PhiJESDown",metJesDownPhi);
+      chain.SetBranchAddress("metFull_CorrT1PxJESDown",metJesDownPx);
+      chain.SetBranchAddress("metFull_CorrT1PyJESDown",metJesDownPy);
 
     }
     chain.SetBranchAddress("jetsAK4CHSTight_Phi",    &jetPhi);
@@ -579,16 +606,7 @@ int main(int argc, char **argv) {
       
     }
 
-    if(isData=="MC"){
-        chain.SetBranchAddress("metFull_Pt",metPt);
-        chain.SetBranchAddress("metFull_Phi",metPhi);}
-    else {
-        chain.SetBranchAddress("metFull_Pt",metPt);
-        chain.SetBranchAddress("metFull_Phi",metPhi);
-        }
 
-    chain.SetBranchAddress("metFull_Px",metPx);
-    chain.SetBranchAddress("metFull_Py",metPy);
     
     //Muon trigger
     //string ptmu="20";
@@ -643,7 +661,7 @@ int main(int argc, char **argv) {
     else{
         chain.SetBranchAddress("Event_passesHLT_Ele27_eta2p1_WPLoose_Gsf_v1", &slTrigEle_v1);
         chain.SetBranchAddress("Event_passesHLT_Ele27_eta2p1_WPLoose_Gsf_v2", &slTrigEle_v2);
-        }
+    }
     chain.SetBranchAddress("Event_passesSingleElTriggers", &passElTrig);
     chain.SetBranchAddress("Event_passesSingleMuTriggers", &passMuTrig);
     chain.SetBranchAddress("Event_passesHadronicTriggers", &passHadTrig);
@@ -1221,10 +1239,7 @@ int main(int argc, char **argv) {
     //  puDownFact=0;
     //  }
     //cout << "uffa5 "<<endl;
-    met = metPt[0];
-    metpx = metPx[0];
-    metpy = metPy[0];
-  
+    
     TLorentzVector lep1;
     TLorentzVector lep2;
     TLorentzVector lep, mu, el, muloose;
@@ -1402,12 +1417,22 @@ int main(int argc, char **argv) {
     for (size_t scen=0; scen<scenarios.size();++scen){
       string scenario=scenarios.at(scen);
       
-      if(scenario=="jesUp"){ maxJetLoop = min(15, jetJesUpSize);maxJet20Loop = min(15, jet20JesUpSize); }
-      else if(scenario=="jesDown"){ maxJetLoop = min(15, jetJesDownSize);maxJet20Loop = min(15, jet20JesDownSize); }
+      if(scenario=="jesUp"){ maxJetLoop = min(15, jetJesUpSize);maxJet20Loop = min(15, jet20JesUpSize); 
+	metPt[0]=metJesUpPt[0];	metPhi[0]=metJesUpPhi[0];metPx[0]=metJesUpPx[0];metPy[0]=metJesUpPy[0];
+      }
+      else if(scenario=="jesDown"){ maxJetLoop = min(15, jetJesDownSize);maxJet20Loop = min(15, jet20JesDownSize); 
+	metPt[0]=metJesDownPt[0];metPhi[0]=metJesDownPhi[0];metPx[0]=metJesDownPx[0];metPy[0]=metJesDownPy[0];
+      }
       else {
+	metPt[0]=metZeroPt[0];	metPhi[0]=metZeroPhi[0];metPx[0]=metZeroPx[0];metPy[0]=metZeroPy[0];
 	maxJetLoop = min(15, jetSize);
 	maxJet20Loop = min(15, jet20Size);
       }
+
+      met = metPt[0];
+      metpx = metPx[0];
+      metpy = metPy[0];
+
       //cout << "uffa8 "<<endl;
       systZero.setWeight(0,1.);
       systZero.setWeight("btagUp",1.);
@@ -1664,7 +1689,7 @@ int main(int argc, char **argv) {
 	fileout_step4<<std::fixed<<std::setprecision(0)<<evtNumber<<std::endl;
       }
     }
-    
+    mt = -999;
     if(jets.size() ==2 && bjets.size()==1){ n_2j1t+=w; nev_2j1t+=1;  
 
       if(doSynch && scenario=="nominal"){
@@ -1795,7 +1820,7 @@ int main(int argc, char **argv) {
             if(channel=="muon" || channel == "muonantiiso")syst1BM.fillHistogramsSysts(h_2j1t_muIso,selectedIso[i],w);
 	    *mtw_2j1t = mt;
 	    *met_2j1t = met;
-
+	    //	    cout << "external funct: metpt "<< met<< " dphi "<< phi_lmet<<" mupt " << tightLep[i].Pt()<< " mtw "<< mt <<endl;
             if (calculate_mtw(metPt, metPhi,tightLep) > 50.0){
 	      *mtw_2j1t_mtwcut = mt;
 	      *met_2j1t_mtwcut = met;
@@ -1804,8 +1829,8 @@ int main(int argc, char **argv) {
                 syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_MuPt,tightLep[i].Pt(),w);
                 if(channel=="muon" || channel == "muonantiiso")syst1BM.fillHistogramsSysts(h_2j1t_mtwcut_muIso,selectedIso[i],w);
 	    } 
-            }
-        }
+	}
+      }
 
     //define signal enriching condition:
     for (size_t j= 0; j< (size_t)jets.size();++j ){
@@ -1871,9 +1896,9 @@ int main(int argc, char **argv) {
     *mindeltaphi20_2j1t = topUtils.mindeltaphi(metPhi[0],jets20);
     *mindeltaphi_2j1t_mtwcut = topUtils.mindeltaphi(metPhi[0],jets);
     *mindeltaphi20_2j1t_mtwcut = topUtils.mindeltaphi(metPhi[0],jets20);
-
-    TVector2 met( metpx, metpy);
-    double Mt2w = Mt2cal->calculateMT2w(jets_nob20,bjets20,tightLep.at(0), met,"MT2w"); 
+    
+    TVector2 metv( metpx, metpy);
+    double Mt2w = Mt2cal->calculateMT2w(jets_nob20,bjets20,tightLep.at(0), metv,"MT2w"); 
     *mt2w_2j1t_mtwcut = Mt2w;
     *mt2w_2j1t = Mt2w;
 
@@ -2043,7 +2068,7 @@ int main(int argc, char **argv) {
     }
     if(signalenriched && qcddepleted) {
 
-    *w_2j1t_mtwcut_sr=w;
+      *w_2j1t_mtwcut_sr=w;
       if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t_mtwcut_sr");
     }
     *w_2j1t=w;
@@ -2055,6 +2080,7 @@ int main(int argc, char **argv) {
 	}
       }
     }
+    //    cout << "2j1t mtw "<< *mtw_2j1t << " qcd depleted? "<< qcddepleted << " scenario "<< scenario<<endl;
     if(addTrees)syst1BM.fillTreesSysts(trees1T,"2j1t");
     //AOB for 2j1t?
     }
