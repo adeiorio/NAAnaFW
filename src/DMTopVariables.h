@@ -50,7 +50,8 @@ public:
   double  mlj(TLorentzVector , TLorentzVector);
   double mindeltaphi(double metphi,  vector<math::PtEtaPhiELorentzVector> jets);
   double mindeltaphi(double metphi,  vector<TLorentzVector> jets);
-
+  double costhetael(TLorentzVector, TLorentzVector, TLorentzVector);
+  double costhetapol(TLorentzVector, TLorentzVector, TLorentzVector);
     
 
 };
@@ -326,7 +327,7 @@ double TopUtilities::mindeltaphi(double metphi,  vector<TLorentzVector> jets){
   return mindphi;
 }
 
-double  TopUtilities::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy)
+double TopUtilities::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy)
 {
     math::PtEtaPhiELorentzVector lb = lepton + jet;
     double mlb2 = lb.mass() * lb.mass();
@@ -336,6 +337,27 @@ double  TopUtilities::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhi
     return sqrt( mlb2 + 2 * ( etlb * metPT - lb.px() * metPx - lb.py() * metPy ) );
 }
 
+double TopUtilities::costhetapol(TLorentzVector lepton, TLorentzVector W, TLorentzVector top)
+{
+  TLorentzVector W_1;
+  W_1.SetPxPyPzE(-W.Px(),-W.Py(),-W.Pz(),W.E());
+  lepton.Boost(W_1.BoostVector());
+  TLorentzVector top_1;
+  top_1.SetPxPyPzE(-top.Px(),-top.Py(),-top.Pz(),top.E());
+  W.Boost(top_1.BoostVector());
+  lepton.Boost(top_1.BoostVector());
+  double costheta=(W.Vect()*lepton.Vect())/((W.Vect()).Mag()*(lepton.Vect()).Mag());
+  return costheta;
+}
 
+double TopUtilities::costhetael(TLorentzVector lepton, TLorentzVector jet, TLorentzVector top)
+{
+  TLorentzVector top_1;
+  top_1.SetPxPyPzE(-top.Px(),-top.Py(),-top.Pz(),top.E());
+  jet.Boost(top.BoostVector());
+  lepton.Boost(top_1.BoostVector());
+  double costheta=(jet.Vect()*lepton.Vect())/((jet.Vect()).Mag()*(lepton.Vect()).Mag());
+  return costheta;
+}
   
 #endif
