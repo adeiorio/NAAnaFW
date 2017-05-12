@@ -18,6 +18,9 @@ def formSamples(proclist):
         if proc=="ST" or isAllProcesses:
             from samplesST import samples as stemp
             samp.extend(stemp)
+        if proc=="ST_sd" or isAllProcesses:
+            from samplesST_sd import samples as stemp
+            samp.extend(stemp)
         if proc=="TT" or isAllProcesses:
             from samplesTT import samples as stemp
             samp.extend(stemp)
