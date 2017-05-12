@@ -44,14 +44,14 @@ public:
   math::PtEtaPhiELorentzVector top4Momentum(float leptonPx, float leptonPy, float leptonPz, float leptonE, float jetPx, float jetPy, float jetPz, float jetE, float metPx, float metPy);
   math::XYZTLorentzVector NuMomentum(float leptonPx, float leptonPy, float leptonPz, float leptonPt, float leptonE, float metPx, float metPy );
 
-  double  topMtw(TLorentzVector, TLorentzVector, float metPx, float metPy);  
-  double  topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy);  
-  double  mlj(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet);
-  double  mlj(TLorentzVector , TLorentzVector);
+  double topMtw(TLorentzVector, TLorentzVector, float metPx, float metPy);  
+  double topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy);  
+  double mlj(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet);
+  double mlj(TLorentzVector , TLorentzVector);
   double mindeltaphi(double metphi,  vector<math::PtEtaPhiELorentzVector> jets);
   double mindeltaphi(double metphi,  vector<TLorentzVector> jets);
-  double costhetael(TLorentzVector, TLorentzVector, TLorentzVector);
   double costhetapol(TLorentzVector, TLorentzVector, TLorentzVector);
+  double costhetael(TLorentzVector,TLorentzVector, float metPx, float metPy);
     
 
 };
@@ -337,8 +337,12 @@ double TopUtilities::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiE
     return sqrt( mlb2 + 2 * ( etlb * metPT - lb.px() * metPx - lb.py() * metPy ) );
 }
 
-double TopUtilities::costhetapol(TLorentzVector lepton, TLorentzVector W, TLorentzVector top)
+double TopUtilities::costhetael(TLorentzVector top, TLorentzVector lepton, float metPx, float metPy)
 {
+  math::XYZTLorentzVector Numomentum = NuMomentum(lepton.Px(), lepton.Py(), lepton.Pz(), sqrt(lepton.Px()*lepton.Px()+lepton.Py()*lepton.Py()), lepton.E(), metPx, metPy);
+  TLorentzVector Nu;
+  Nu.SetPxPyPzE(Numomentum.Px(),Numomentum.Py(),Numomentum.Pz(),Numomentum.E());
+  TLorentzVector W = lepton + Nu;
   TLorentzVector W_1;
   W_1.SetPxPyPzE(-W.Px(),-W.Py(),-W.Pz(),W.E());
   lepton.Boost(W_1.BoostVector());
@@ -350,7 +354,7 @@ double TopUtilities::costhetapol(TLorentzVector lepton, TLorentzVector W, TLoren
   return costheta;
 }
 
-double TopUtilities::costhetael(TLorentzVector lepton, TLorentzVector jet, TLorentzVector top)
+double TopUtilities::costhetapol(TLorentzVector lepton, TLorentzVector jet, TLorentzVector top)
 {
   TLorentzVector top_1;
   top_1.SetPxPyPzE(-top.Px(),-top.Py(),-top.Pz(),top.E());
