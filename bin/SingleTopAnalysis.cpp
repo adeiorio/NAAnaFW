@@ -1856,8 +1856,8 @@ int main(int argc, char **argv) {
 	  float phi_lmet = fabs(deltaPhi(tightLep[0].Phi(), metPhi[0]) );
 	  mt = sqrt(2* tightLep[0].Pt() * met* ( 1- cos(phi_lmet)));
 	}
-	if((channel == "muon" && mt> 50) || (channel == "electron" && metPt[0] >50)){
-	  n_2j1tmtw+=w;
+	if(((channel == "muon" || channel=="muonantiiso") && mt> 50) || (channel == "electron" && metPt[0] >50)){
+          n_2j1tmtw+=w;
 	  nev_2j1tmtw+=1.;
 	  
 	  if(doSynch){
