@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 
     std::cout<<"Info: Starting to run ..."<<endl;
     std::cout<<"--------------------"<<endl; 
-    std::cout<<"Usage:\t "<<argv[0]<<" "<<argv[1]<<" "<<argv[2]<<" "<<argv[3]<<" "<<argv[4]<<" "<<argv[5]<<" "<<argv[6]<<" "<<argv[7]<<endl;
+    std::cout<<"Usage:\t "<<argv[0]<<" "<<argv[1]<<" "<<argv[2]<<" "<<argv[3]<<" "<<argv[4]<<" "<<argv[5]<<" "<<argv[6]<<" "<<argv[7]<<" "<<endl;
     
 
     string sample(argv[1]) ;
@@ -81,6 +81,10 @@ int main(int argc, char **argv) {
 
     string addMVA(argv[9]);
     if(addMVA != "noMVA")std::cout<<"\t adding mvas: "<<addMVA<<endl;
+    
+    string outputpath(argv[10]);
+    std::cout<<"\t Writing output to : "<<outputpath<<endl;
+
     bool doMVA=false;
     if(addMVA != "noMVA")doMVA=true;
     
@@ -334,7 +338,9 @@ int main(int argc, char **argv) {
     maxSysts= systZero.maxSysts;
     TFile * allMyFiles[maxSysts];
     
-    systZero.createFilesSysts(allMyFiles,"./res/"+sample + "_" +channel);
+    systZero.createFilesSysts(allMyFiles,outputpath+"/res/"+sample + "_" +channel);
+    
+    //systZero.createFilesSysts(allMyFiles,"./res/"+sample + "_" +channel);
     //addWZNLO=false, 
     //addPDF=true;
     //addQ2=true;
