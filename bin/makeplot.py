@@ -121,9 +121,10 @@ def makestack(njmt, variabile, syst, samples):
 
 usage = 'python makeplot.py'
 parser = optparse.OptionParser(usage)
-parser.add_option('-p', '--plot', dest='plot', default = True, action='store_false', help='Default make all the plots')
-parser.add_option('-s', '--stack', dest='stack', default = False, action='store_true', help='Default make all the stacks')
-parser.add_option('-S', '--syst', dest='syst', type='string', default = 'all', help='Default run over all systematics')
+parser.add_option('-p', '--plot', dest='plot', default = False, action='store_true', help='Default dont make all the plots')
+parser.add_option('-l', '--lumi', dest='lumi', default = False, action='store_true', help='Default dont make trees lumi')
+parser.add_option('-s', '--stack', dest='stack', default = False, action='store_true', help='Default dont make all the stacks')
+parser.add_option('-S', '--syst', dest='syst', type='string', default = 'nosyst', help='Default no systematics')
 parser.add_option('-P', '--process', dest='process', type='string', default = 'all', help="samples to add, according to the convention in 'script_rename.py'. Options are: 'All','ST','VJ','VV','QCDMu','QCDEle', or '_'+specific process, e.g. _ST_T_tch to add only the _ST_T_tch. Accepts also multiple processes, separated by comma, e.g. -P ST,_TT,VJ will select the V+jets samples and single top sample sets, as well as the one sample named TT.")
 (opt, args) = parser.parse_args()
 
@@ -141,6 +142,7 @@ else:
     samplesnames.append("VV")
     samplesnames.append("TT")
     samplesnames.append("DYJets")
+    samplesnames.append("QCDMu")
 
 for sn in samplesnames:
 #    print "sn is: ",sn
@@ -247,18 +249,16 @@ variabili_3j2t.append(variabile("costhetapolSecond",wzero, 10, -1, 1))
 systematics = []
 systematics.append("") #di default per syst="" alla variabile si applica il peso w*w_nominal
 
-if opt.syst!="all":
+if opt.syst!="nosyst":
     systematics.append((opt.systs).split(","))
-else:
-    systematics.append("btagUp")
-    systematics.append("btagDown")
-    systematics.append("mistagUp")
-    systematics.append("mistagDown")
-    systematics.append("puUp")
-    systematics.append("puDown")
-
-    systematics.append("lepUp")
-    systematics.append("lepDown")
+#    systematics.append("btagUp")  
+# systematics.append("btagDown")
+ #   systematics.append("mistagUp")
+  #  systematics.append("mistagDown")
+   # systematics.append("puUp")
+   # systematics.append("puDown")
+#    systematics.append("lepUp")
+ #   systematics.append("lepDown")
 '''
 #-----------------------------------------------------------
 #tagli per la topologia 2 jet 1 tag
@@ -289,6 +289,7 @@ tagli4.append(taglio("topMassLeading>0","M0"))
 lumi=35.8
 
 print "plot option is ", opt.plot
+
 if opt.plot:
     if not os.path.exists("Plot"):
         os.system("mkdir Plot")
@@ -334,22 +335,13 @@ if opt.stack:
         makestack(njmt, var3, syst, samples)
     
    
-
-
+if opt.lumi:
+    if not os.path.exists("trees_lumi"):
+        os.system("mkdir trees_lumi")
+    for comp in component:
+        makelumi("macro_lumi.C", comp.label, lumi, comp.sigma)
 
 '''     
-namefile = "Stack.root"
-rmfile(namefile) 
-for syst in systematics:
-    namefile="Stack_"+syst+".root"
-    rmfile(namefile)
-    njmt="_2j1t_mtwcut"
-    for var in variabili:
-        makestack("macro_stack.C",var, njmt, syst)
-    njmt="_3j2t"
-    for var3 in variabili_3j2t:
-        makestack("macro_stack.C",var3, njmt, syst)
-
 for var in variabili:
     for taglio1 in tagli1:
         for taglio2 in tagli2:

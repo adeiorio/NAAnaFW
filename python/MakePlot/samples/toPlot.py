@@ -10,7 +10,7 @@ import os, commands
 from SingleTop import *
 from VJets import *
 from TT import *
-#from QCD import *
+from QCD import *
 from DDQCD import *
 from VV import *
 from Data import *
@@ -24,7 +24,7 @@ samples["ST_tch_sd"] = ST_tch_sd
 samples["ST_sch"] = ST_sch
 samples["ST_tW"] = ST_tW
 samples["TT"] = TT
-#samples["QCDMu"] = QCDMu
+samples["QCDMu"] = QCDMu
 samples["DDQCD"] = DDQCD
 samples["SingleTop_schannel"] = ST_sch
 #samples["SingleTop_tW"] = ST_tW
