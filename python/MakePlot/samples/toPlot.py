@@ -19,6 +19,10 @@ samples = collections.OrderedDict()
 
 samples["Data"] = Data
 samples["SingleTop_tchannel"] = ST_tch
+samples["ST_tch"] = ST_tch
+samples["ST_tch_sd"] = ST_tch_sd
+samples["ST_sch"] = ST_sch
+samples["ST_tW"] = ST_tW
 samples["TT"] = TT
 #samples["QCDMu"] = QCDMu
 samples["DDQCD"] = DDQCD

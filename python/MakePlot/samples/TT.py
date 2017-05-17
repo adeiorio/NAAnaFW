@@ -1,14 +1,19 @@
 from utils import *
 
+TTbar = sample()
+TTbar.files = outlist (d,"TT")
+#TTbar.files = TTbar.files[:1]
+TTbar.jpref = jetLabel 
+TTbar.jp = jetLabel 
+TTbar.skimEff = 1.
+TTbar.sigma = 831.76
+TTbar.color = ROOT.kOrange
+TTbar.style = 1
+TTbar.fill = 1001
+TTbar.leglabel = "t#bar{t}"
+TTbar.label = "TT"
+
 TT = sample()
-TT.files = outlist (d,"TT")
-TT.files = TT.files[:1]
-TT.jpref = jetLabel 
-TT.jp = jetLabel 
-TT.skimEff = 1.
-TT.sigma = 831.76
-TT.color = ROOT.kOrange
-TT.style = 1
-TT.fill = 1001
 TT.leglabel = "t#bar{t}"
-TT.label = "TT"
+TT.color = ROOT.kOrange
+TT.components = [TTbar]

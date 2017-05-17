@@ -116,9 +116,15 @@ ST_tch.style = 1
 ST_tch.fill = 1001
 ST_tch.leglabel = "t, t-ch"
 ST_tch.label = "ST_tch"
-#ST_tch.components = [ST_T_tch]
-ST_tch.components = [ST_T_tch,ST_T_tch_sd,ST_Tbar_tch,ST_Tbar_tch_sd]
-#ST.components = [ST_Tbar_tW, ST_T_tW, ST_T_tch, ST_Tbar_tch]
+ST_tch.components = [ST_T_tch,ST_Tbar_tch]
+
+ST_tch_sd = sample()
+ST_tch_sd.color = ROOT.kRed
+ST_tch_sd.style = 1
+ST_tch_sd.fill = 1001
+ST_tch_sd.leglabel = "t, t-ch_sd"
+ST_tch_sd.label = "ST_tch_sd"
+ST_tch_sd.components = [ST_T_tch_sd,ST_Tbar_tch_sd]
 
 ST_sch = sample()
 ST_sch.color = 95 
@@ -127,12 +133,11 @@ ST_sch.fill = 1001
 ST_sch.leglabel = "t, s-ch"
 ST_sch.label = "ST_sch"
 ST_sch.components = [ST_T_sch]
-#ST.components = [ST_Tbar_tW, ST_T_tW, ST_T_tch, ST_Tbar_tch]
 
 ST_tW = sample()
 ST_tW.color = ROOT.kOrange+2
 ST_tW.style = 1
 ST_tW.fill = 1001
-ST_tW.leglabel = "Single-top, tW"
+ST_tW.leglabel = "tW"
 ST_tW.label = "ST_tW"
 ST_tW.components = [ST_T_tW,ST_Tbar_tW]
