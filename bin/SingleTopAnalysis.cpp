@@ -1303,7 +1303,7 @@ int main(int argc, char **argv) {
         TrigIsoMu22=false;
         TrigIsoMu24=true;//Trigger efficiency:use the measured one atm --> always pass the trigger in MC// (slTrigIsoMu22_v1 || slTrigIsoMu22_v2 || slTrigIsoMu22_v3);  
 	TrigGSFEl32=true;
-        if (doSynch ){
+        if (doSynch || channel == "muonantiiso"){
 	  TrigIsoMu24=false;
 	  TrigGSFEl32=false;
 	  //TrigIsoMu24 = true; 
@@ -1501,6 +1501,12 @@ int main(int argc, char **argv) {
 
         lepWeight1MuLepUp=lepWeight1Mu+errMu;
         lepWeight1MuLepDown=lepWeight1Mu-errMu;
+        if (channel == "muonantiiso"){
+         lepWeightBCDEF1Mu = 1.;
+         lepWeightGH1Mu = 1.; 
+         lepWeight1MuLepUp = 0.;
+         lepWeight1MuLepDown = 0.;
+        }
       }
     }
     
