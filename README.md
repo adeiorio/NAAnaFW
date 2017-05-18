@@ -5,7 +5,7 @@
 
 -- setenv SCRAM_ARCH slc6_amd64_gcc530
 
--- cd CMSSW_8_0_20/src
+-- cd CMSSW_8_0_26_patch1/src
 
 -- cmsenv
 
@@ -80,7 +80,15 @@ To rename the output to the standard naming of the analysis please follow the co
 
 script_rename.py -s files/ -l files/renamed/
 
-The SingleTopAnalysis.cpp contains the event selection and then it can be used with the following python script:
+The SingleTopAnalysis.cpp contains the event selection and the systematics application.
+
+Before using it do the 
+
+source preparesetup.csh
+
+to setup the grid certificates to run on the batch queue. 
+
+The SingleTopAnalysis.cpp be used with the following python script:
 
 python new_singletop.py --t3batch -f trees/mc/renamed/ -P ST,TT,VJ,VV -S 10
 

@@ -2344,7 +2344,9 @@ void DMAnalysisTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetu
 	    ( (fabs(eta)<=2.4 && chHadEnFrac>0 && chMulti>0 && chEmEnFrac<0.99) || fabs(eta)>2.4);
         }
 	else if( (fabs(eta) >2.7) && (fabs(eta)<=3.0)) {
-          passesID = neuEmEnFrac<0.90 && neuMulti>2. ;
+          //passesID = neuEmEnFrac<0.90 && neuMulti>2. ;
+	  // spotted during the sync exe. https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016: For 2.7<|eta|<= 3.0 Apply
+	  passesID = neuEmEnFrac > 0.01 && neuHadEnFrac < 0.98 && neuMulti > 2.;
 	}
         else if(fabs(eta)>3.0){
           passesID = neuEmEnFrac<0.90 && neuMulti>10. ;

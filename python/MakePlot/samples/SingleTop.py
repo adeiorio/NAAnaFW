@@ -116,6 +116,7 @@ ST_tch.style = 1
 ST_tch.fill = 1001
 ST_tch.leglabel = "t, t-ch"
 ST_tch.label = "ST_tch"
+<<<<<<< HEAD
 ST_tch.components = [ST_T_tch,ST_Tbar_tch]
 
 ST_tch_sd = sample()
@@ -125,6 +126,11 @@ ST_tch_sd.fill = 1001
 ST_tch_sd.leglabel = "t, t-ch_sd"
 ST_tch_sd.label = "ST_tch_sd"
 ST_tch_sd.components = [ST_T_tch_sd,ST_Tbar_tch_sd]
+=======
+#ST_tch.components = [ST_T_tch]
+ST_tch.components = [ST_T_tch,ST_T_tch_sd,ST_Tbar_tch,ST_Tbar_tch_sd]
+#ST.components = [ST_Tbar_tW, ST_T_tW, ST_T_tch, ST_Tbar_tch]
+>>>>>>> 1fbd2509596953fd3453a4d6ee6790ad5f7a8996
 
 ST_sch = sample()
 ST_sch.color = 95 
