@@ -792,6 +792,7 @@ int main(int argc, char **argv) {
     float * topMassLeading_3j2t = new float(-999.0); 
     float * nextrajets_3j2t = new float(-999.0); 
     float * mt2w_3j2t = new float(-999.0); 
+    float * met_3j2t = new float(-999.0);
     
     float * mljprime_3j2t = new float(-999.0);
     float * mlbleading_3j2t = new float(-999.0);
@@ -818,6 +819,7 @@ int main(int argc, char **argv) {
     float * w_3j1t = new float(-999.0);
     float * mtw_3j1t = new float(-999.0);
     float * mt2w_3j1t = new float(-999.0); 
+    float * met_3j1t = new float(-999.0);
     
     float * etajprime_3j1t = new float(-999.0);
     float * jprimeflavour_3j1t = new float(-999.0);
@@ -918,6 +920,7 @@ int main(int argc, char **argv) {
       
       syst1BM.branchTreesSysts(trees1T,"3j1t","mtw", outTreeFile, mtw_3j1t);
       syst1BM.branchTreesSysts(trees1T,"3j1t","mt2w", outTreeFile, mt2w_3j1t);
+      syst1BM.branchTreesSysts(trees1T,"3j1t","MET", outTreeFile, met_3j1t);
       
       syst1BM.branchTreesSysts(trees1T,"3j1t","etajprime", outTreeFile, etajprime_3j1t);
       syst1BM.branchTreesSysts(trees1T,"3j1t","jprimeflavour", outTreeFile, jprimeflavour_3j1t);
@@ -953,7 +956,7 @@ int main(int argc, char **argv) {
       syst1BM.branchTreesSysts(trees1T,"3j1t","leadingextrajetcsvweight_sd", outTreeFile, leadingextrajetcsvweight_sd_3j1t);
       syst1BM.branchTreesSysts(trees1T,"3j1t","leadingextrajetflavour", outTreeFile, leadingextrajetflavour_3j1t);
 
-      
+      //3j2t
       syst2BM.branchTreesSysts(trees2T,"3j2t","w", outTreeFile, w_3j2t);
 
       syst2BM.branchTreesSysts(trees2T,"3j2t","mtw", outTreeFile, mtw_3j2t);
@@ -961,28 +964,28 @@ int main(int argc, char **argv) {
       syst2BM.branchTreesSysts(trees2T,"3j2t","topMassLeading", outTreeFile, topMassLeading_3j2t);
       syst2BM.branchTreesSysts(trees2T,"3j2t","topMassSecond", outTreeFile, topMassSecond_3j2t);
       syst2BM.branchTreesSysts(trees2T,"3j2t","mt2w", outTreeFile, mt2w_3j2t);
-
-
-       syst2BM.branchTreesSysts(trees2T,"3j2t","deltaEtabb", outTreeFile, deltaEtabb_3j2t);
- 
-       syst2BM.branchTreesSysts(trees2T,"3j2t","mlbleading", outTreeFile, mlbleading_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","mlbsecond", outTreeFile, mlbsecond_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","mljprime", outTreeFile, mljprime_3j2t);
- 
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topYLeading",   outTreeFile, topYLeading_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topPtLeading",  outTreeFile, topPtLeading_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topMtLeading",  outTreeFile, topMtLeading_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topEtaLeading", outTreeFile, topEtaLeading_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","costhetaelLeading", outTreeFile, costhetaelLeading_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","costhetapolLeading", outTreeFile, costhetapolLeading_3j2t);
- 
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topYSecond",   outTreeFile, topYSecond_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topPtSecond",  outTreeFile, topPtSecond_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topMtSecond",  outTreeFile, topMtSecond_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","topEtaSecond", outTreeFile, topEtaSecond_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","costhetaelSecond", outTreeFile, costhetaelSecond_3j2t);
-       syst2BM.branchTreesSysts(trees2T,"3j2t","costhetapolSecond", outTreeFile, costhetapolSecond_3j2t);
-
+      syst2BM.branchTreesSysts(trees2T,"3j2t","MET", outTreeFile, met_3j2t);
+      
+      syst2BM.branchTreesSysts(trees2T,"3j2t","deltaEtabb", outTreeFile, deltaEtabb_3j2t);
+      
+      syst2BM.branchTreesSysts(trees2T,"3j2t","mlbleading", outTreeFile, mlbleading_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","mlbsecond", outTreeFile, mlbsecond_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","mljprime", outTreeFile, mljprime_3j2t);
+      
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topYLeading",   outTreeFile, topYLeading_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topPtLeading",  outTreeFile, topPtLeading_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topMtLeading",  outTreeFile, topMtLeading_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topEtaLeading", outTreeFile, topEtaLeading_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","costhetaelLeading", outTreeFile, costhetaelLeading_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","costhetapolLeading", outTreeFile, costhetapolLeading_3j2t);
+      
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topYSecond",   outTreeFile, topYSecond_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topPtSecond",  outTreeFile, topPtSecond_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topMtSecond",  outTreeFile, topMtSecond_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","topEtaSecond", outTreeFile, topEtaSecond_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","costhetaelSecond", outTreeFile, costhetaelSecond_3j2t);
+      syst2BM.branchTreesSysts(trees2T,"3j2t","costhetapolSecond", outTreeFile, costhetapolSecond_3j2t);
+      
     }
 
     //doMVA=true;
@@ -2303,6 +2306,7 @@ int main(int argc, char **argv) {
           float phi_lmet = fabs(deltaPhi(tightLep[i].Phi(), metPhi[0]) );
           mt = sqrt(2* tightLep[i].Pt() * met* ( 1- cos(phi_lmet)));
 	  *mtw_3j1t=mt;
+	  *met_3j1t=met;
 	  syst1BM.fillHistogramsSysts(h_3j1t_mtw,mt,w);
 	  if(channel=="muon" || channel == "muonantiiso")syst1BM.fillHistogramsSysts(h_3j1t_muIso,selectedIso[i],w);
 	  if(mt>50){
@@ -2438,6 +2442,7 @@ int main(int argc, char **argv) {
 	    mt = sqrt(2* tightLep[i].Pt() * met* ( 1- cos(phi_lmet)));
 	    syst2BM.fillHistogramsSysts(h_3j2t_mtw,mt,w);
 	    *mtw_3j2t=mt;
+	    *met_3j2t=met;
 	    if(channel=="muon" || channel == "muonantiiso")syst2BM.fillHistogramsSysts(h_3j2t_muIso,selectedIso[i],w);
 	    if(mt>50){
 	      syst2BM.fillHistogramsSysts(h_3j2t_mtwcut_MuPt,tightLep[i].Pt(),w);
