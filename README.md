@@ -168,7 +168,7 @@ To make the 2D histos of the two BDTs for each region you have to use the comman
 
 -- python makeplot.py --h2D
 
-and then you can uroll them in 1D histos with the command:
+and then you can unroll them in 1D histos with the command:
 
 -- python makeplot.py --h1D
 
@@ -180,9 +180,22 @@ to adjust all the systematics and the plots for the final fit.
 
 
 ## Part 5: Statistical inference
-Work in Progress ... 
+The fit framework can be downloaded following the instructions that you can find here:
 
-#Summary of the analyis steps:
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideHiggsAnalysisCombinedLimit
+
+TO be continued when we commit the repository on GitHub.
+
+Go to the folder stat where you can find the script for running the combine tool. 
+The fit to the QCD scale factor can be performed running the script DDQCD_fit.csh wih the command: 
+
+-- source DDQCD_fit.csh
+
+The final fit can be performed running the script fit_muele.csh with the command:
+
+-- source fit_muele.csh
+
+## Summary of the analyis steps:
 - 0 Compile following the instructions in Part 1.
 *
 - 1 Retrieve the files location with:
