@@ -164,7 +164,7 @@ Then it's possible to make the stacks with the command:
 
 with this command the DDQCD sample is also produced.
 
-To make the 2D histos of the two BDT for each region you have to use the command:
+To make the 2D histos of the two BDTs for each region you have to use the command:
 
 -- python makeplot.py --h2D
 
