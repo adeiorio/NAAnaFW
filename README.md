@@ -131,11 +131,11 @@ The output will be put in the directory trees_lumi which will contain the same f
 
 The second operation is the merging of the components of the samples:
 
---python makeplot.py --mertree -L muon,muonantiiso,electron,electronantiiso
+-- python makeplot.py --mertree -L muon,muonantiiso,electron,electronantiiso
 
-These trees can be now used for the trainings of the BDTs: go into the MVA folder and choice the training to perfom in the train_trees.py script; then use the command:
+These trees can be now used for the trainings of the BDTs: go into the MVA folder and choose the training to perfom in the train_trees.py script; then use the command:
 
---python train_trees.py
+-- python train_trees.py
 
 After all the trainings are be performed move again in bin: cd ..
 
@@ -174,7 +174,7 @@ and then you can unroll them in 1D histos with the command:
 
 At the end use the command:
 
---python fit_setup.py 
+-- python fit_setup.py 
 
 to adjust all the systematics and the plots for the final fit.
 
@@ -184,7 +184,7 @@ The fit framework can be downloaded following the instructions that you can find
 
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideHiggsAnalysisCombinedLimit
 
-TO be continued when we commit the repository on GitHub.
+TO be continued when we will commit the repository on GitHub.
 
 Go to the folder stat where you can find the script for running the combine tool. 
 The fit to the QCD scale factor can be performed running the script DDQCD_fit.csh wih the command: 
