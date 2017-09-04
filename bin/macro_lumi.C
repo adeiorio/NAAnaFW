@@ -6,46 +6,113 @@
 #include "TString.h"
 
 using namespace std;
-void macro_lumi(TString channel, double lumi, double sigma)
+void macro_lumi(TString channel, double lumi, double sigma, TString lep)
 {
-
-  Float_t w_nominal1, w_nominal2, w_nominal3;
-  TFile *f1_uncut= TFile::Open("res/"+channel+"_muon.root");
-  TFile *f1 = TFile::Open("trees/trees_"+channel+"_muon.root");
-  TTree *t1 =(TTree*)f1->Get("events_2j1t");
-  t1->SetBranchAddress("w_nominal", &w_nominal1); 
-  TFile *f1_new = TFile::Open("trees_lumi/trees_"+channel+"_muon.root","RECREATE");  
+  if((lep=="electron"||lep=="electronantiiso")&& channel=="QCDMuPt20toInf") return;
+  if((lep=="muonantiiso"||lep=="electronantiiso")&& channel=="TT_sd") return;
+  if((lep=="muonantiiso"||lep=="electronantiiso")&& (channel.Contains("hdamp")||channel.Contains("psq2"))) return;
+  Float_t w1, w2, w3, w4, w5, w6, w7, w8, w9;
+  TFile * f1_uncut= TFile::Open("res/"+lep+"/"+channel+"_"+lep+".root");
   h1_uncut =(TH1F*)f1_uncut->Get("h_cutFlow");
-  Double_t n_uncut = h1_uncut->GetBinContent(0);
+  Float_t n_uncut = h1_uncut->GetBinContent(0);
+  TFile * f1 = TFile::Open("trees/"+lep+"/trees_"+channel+"_"+lep+".root");
+
+  TTree * t1 =(TTree*)f1->Get("events_2j1t");
+  TTree * t2 =(TTree*)f1->Get("events_2j1t_jesUp");
+  TTree * t3 =(TTree*)f1->Get("events_2j1t_jesDown");
+  TTree * t4 =(TTree*)f1->Get("events_3j1t");
+  TTree * t5 =(TTree*)f1->Get("events_3j1t_jesUp");
+  TTree * t6 =(TTree*)f1->Get("events_3j1t_jesDown");
+  TTree * t7 =(TTree*)f1->Get("events_3j2t");
+  TTree * t8 =(TTree*)f1->Get("events_3j2t_jesUp");
+  TTree * t9 =(TTree*)f1->Get("events_3j2t_jesDown");
+
+  t1->SetBranchAddress("w", &w1); 
+  t2->SetBranchAddress("w", &w2); 
+  t3->SetBranchAddress("w", &w3); 
+  t4->SetBranchAddress("w", &w4); 
+  t5->SetBranchAddress("w", &w5); 
+  t6->SetBranchAddress("w", &w6); 
+  t7->SetBranchAddress("w", &w7); 
+  t8->SetBranchAddress("w", &w8); 
+  t9->SetBranchAddress("w", &w9); 
+
+  TFile *f1_new = TFile::Open("trees_lumi/"+lep+"/trees_"+channel+"_"+lep+".root","RECREATE");  
+
   TTree *t1_new =t1->CloneTree(0); 
+  TTree *t2_new =t2->CloneTree(0); 
+  TTree *t3_new =t3->CloneTree(0); 
+  TTree *t4_new =t4->CloneTree(0); 
+  TTree *t5_new =t5->CloneTree(0); 
+  TTree *t6_new =t6->CloneTree(0); 
+  TTree *t7_new =t7->CloneTree(0); 
+  TTree *t8_new =t8->CloneTree(0); 
+  TTree *t9_new =t9->CloneTree(0); 
+
   Int_t nentries1 = (Int_t) t1->GetEntries();
-  for (Int_t i = 0; i<=nentries1; i++)
+  for (Int_t i = 0; i<nentries1; i++)
     {
       t1->GetEntry(i);
-      w_nominal1*=(lumi*sigma*1000/n_uncut);
+      w1*=(lumi*sigma*1000/n_uncut);
       t1_new->Fill();
     }
-
-  TTree *t2 =(TTree*)f1->Get("events_3j2t");
-  t2->SetBranchAddress("w_nominal", &w_nominal2); 
-  TTree *t2_new = t2->CloneTree(0); 
-  Int_t nentries2 = (Int_t) t2->GetEntries();
-  for (Int_t i = 0; i<=nentries2; i++)
+  Int_t nentries4 = (Int_t) t4->GetEntries();
+  for (Int_t i = 0; i<nentries4; i++)
     {
-      t2->GetEntry(i);
-      w_nominal2*=(lumi*sigma*1000/n_uncut);
-      t2_new->Fill();
+      t4->GetEntry(i);
+      w4*=(lumi*sigma*1000/n_uncut);
+      t4_new->Fill();
     }
-
-  TTree *t3 =(TTree*)f1->Get("events_3j1t");
-  t3->SetBranchAddress("w_nominal", &w_nominal3); 
-  TTree *t3_new = t3->CloneTree(0); 
-  Int_t nentries3 = (Int_t) t2->GetEntries();
-  for (Int_t i = 0; i<=nentries3; i++)
+  Int_t nentries7 = (Int_t) t7->GetEntries();
+  for (Int_t i = 0; i<nentries7; i++)
     {
-      t3->GetEntry(i);
-      w_nominal3*=(lumi*sigma*1000/n_uncut);
-      t3_new->Fill();
+      t7->GetEntry(i);
+      w7*=(lumi*sigma*1000/n_uncut);
+      t7_new->Fill();
     }
+  if(!(channel.Contains("hdamp")||channel.Contains("psq2"))){
+    Int_t nentries2 = (Int_t) t2->GetEntries();
+    for (Int_t i = 0; i<nentries2; i++)
+      {
+	t2->GetEntry(i);
+	w2*=(lumi*sigma*1000/n_uncut);
+	t2_new->Fill();
+      }
+    Int_t nentries3 = (Int_t) t3->GetEntries();
+    for (Int_t i = 0; i<nentries3; i++)
+      {
+	t3->GetEntry(i);
+	w3*=(lumi*sigma*1000/n_uncut);
+	t3_new->Fill();
+      }
+    Int_t nentries5 = (Int_t) t5->GetEntries();
+    for (Int_t i = 0; i<nentries5; i++)
+      {
+	t5->GetEntry(i);
+	w5*=(lumi*sigma*1000/n_uncut);
+	t5_new->Fill();
+      }
+    Int_t nentries6 = (Int_t) t6->GetEntries();
+    for (Int_t i = 0; i<nentries6; i++)
+      {
+	t6->GetEntry(i);
+	w6*=(lumi*sigma*1000/n_uncut);
+	t6_new->Fill();
+      }
+    Int_t nentries8 = (Int_t) t8->GetEntries();
+    for (Int_t i = 0; i<nentries8; i++)
+      {
+	t8->GetEntry(i);
+	w8*=(lumi*sigma*1000/n_uncut);
+	t8_new->Fill();
+      }
+    Int_t nentries9 = (Int_t) t9->GetEntries();
+    for (Int_t i = 0; i<nentries9; i++)
+      {
+	t9->GetEntry(i);
+	w9*=(lumi*sigma*1000/n_uncut);
+	t9_new->Fill();
+      }
+  }
   f1_new->Write();
 }
