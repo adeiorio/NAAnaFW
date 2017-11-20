@@ -9,11 +9,11 @@ void macro_BDT(TString channel, TString njmt, TString training_name, TString sys
 {
   if((lep=="electron"||lep=="electronantiiso")&& channel=="QCDMuPt20toInf") return;
   if((lep=="muonantiiso"||lep=="electronantiiso")&& channel=="TT_sd") return;
-  if((channel.Contains("hdamp")||channel.Contains("psq2"))&&((lep=="muonantiiso"||lep=="electronantiiso")||(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")))) return;
+  if((channel.Contains("hdamp")||channel.Contains("psq2"))&&((lep=="muonantiiso"||lep=="electronantiiso")||(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||(syst.EqualTo("jerUp")||syst.EqualTo("jerDown"))))) return;
   TFile * f = TFile::Open("trees_lumi/"+lep+"/trees_"+channel+"_"+lep+".root","UPDATE");
   TString treename;
   if(syst.EqualTo("")) treename = "events_"+njmt;
-  if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")) treename = "events_"+njmt+"_"+syst;
+  if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")) treename = "events_"+njmt+"_"+syst;
   TTree * t =(TTree*)f->Get(treename);
   Float_t BDT;
   TString branch_name = "BDT_"+training_name;

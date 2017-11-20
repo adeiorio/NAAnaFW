@@ -15,7 +15,7 @@ void macro_2Dhisto(TString channel, TString njmt, TString syst, TString region, 
   gStyle->SetOptStat(0);
   TString outfilename, taglio, selection;
   selection = "BDT_"+BDT1_name+":BDT_"+BDT2_name;
-  if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")) treename = "events_"+njmt+"_"+syst;
+  if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")) treename = "events_"+njmt+"_"+syst;
   else treename = "events_"+njmt;
   TTree * t =(TTree*)f->Get(treename);
   if(region=="cr") taglio = "(mtw>50 && etajprime<2.4";
@@ -26,7 +26,7 @@ void macro_2Dhisto(TString channel, TString njmt, TString syst, TString region, 
     t->Project("h2",selection,taglio+")*w*w_nominal");
   }
   else{
-    if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")){
+    if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")){
       histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
       t->Project("h2",selection,taglio+")*w*w_nominal");
     }

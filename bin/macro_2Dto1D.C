@@ -25,7 +25,7 @@ void macro_2Dto1D(TString channel, TString njmt, TString syst, TString region, F
     cout << histo2Dname << endl;
     outfilename = "Plot/"+lep+"/"+channel+"_"+lep+".root";
   }
-  else if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")){
+  else if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")){
     histo2Dname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
     outfilename = "Plot/"+lep+"/"+channel+"_"+lep+"_"+syst+".root";
   }

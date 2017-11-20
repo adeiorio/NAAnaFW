@@ -35,10 +35,13 @@ vs = ["Up", "Down"]
 
 newsysts = {"q2":["q2TT","q2ST_tch","q2ST_tch_sd", "q2WJets", "q2DYJets", "q2VV"], "psq2":["psq2TT","psq2ST_tch"], "hdamp":["hdampST_tch","hdampTT"]}
 systsamples  =  {"q2":["TT","ST_tch","ST_tch_sd", "WJets", "DYJets", "VV"], "psq2":["TT","ST_tch"], "hdamp":["ST_tch","TT"]}
-allsysts = ["", "btag", "mistag", "jes", "pu", "lep", "pdf_total"]
+allsysts = ["", "btag", "mistag", "jes", "jer", "pu", "pdf_total"]
+newlepSyst = {"lep":["lepMu","lepE"]}
 for sy in systs:
     for s in newsysts[sy]:
         allsysts.append(s)
+for s in newlepSyst["lep"]:
+    allsysts.append(s)
 
 def createSyst(versus, syst, newsyst, systsamp, verbose = True):
     for ch in channels:
@@ -62,6 +65,32 @@ def createSyst(versus, syst, newsyst, systsamp, verbose = True):
             srcSys = s.label + "_" + ch + "_" + syst + versus + ".root"  
             dstSys = s.label + "_" + ch + "_" + syst + s.label + versus + ".root" 
             
+            if verbose: print "Copying " + pathch + srcSys + " to "+ pathch + dstSys
+            shutil.copyfile(pathch + srcSys, pathch + dstSys)
+
+def createLepSyst(versus, newlepsyst, verbose = True):
+    for ch in channels:
+        for s in samples:
+            if ("QCDMu" in s.label)  and "electron" in ch : continue 
+            pathch = opt.path+"/"+ch+"/"
+
+            if s.label == "Data":continue
+            src = s.label + "_" + ch + ".root"
+            dst =  [s.label + "_" + ch + "_" + nlepSyst + versus + ".root" for nlepSyst in newlepsyst]
+#            print dst
+
+            if(verbose):
+                for d in dst:
+                    print "Copying " + pathch + src + " to "+ pathch + d
+    
+            [shutil.copyfile(pathch + src, pathch + d) for d in dst]
+
+            if ch == "muon":
+                srcSys = s.label + "_" + ch + "_lep" + versus + ".root"  
+                dstSys = s.label + "_" + ch + "_lepMu" + versus + ".root" 
+            else:
+                srcSys = s.label + "_" + ch + "_lep" + versus + ".root"  
+                dstSys = s.label + "_" + ch + "_lepE" + versus + ".root" 
             if verbose: print "Copying " + pathch + srcSys + " to "+ pathch + dstSys
             shutil.copyfile(pathch + srcSys, pathch + dstSys)
 
@@ -114,6 +143,9 @@ for v in vs:
 for v in vs:
     for s in systs:
         createSyst(v, s, newsysts[s], systsamples[s])
+
+for v in vs:
+    createLepSyst(v, newlepSyst["lep"])
 
 rmdircont("fit")
 copyall()

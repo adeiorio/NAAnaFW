@@ -19,7 +19,7 @@ void macro_plot(TString channel, TString variabile, TString title, TString peso,
   if(cut_tag.EqualTo(""))    histoname = "h_"+njmt+"_"+variabile;
   else    histoname = "h_"+njmt+"_"+variabile+"_"+cut_tag;
   TH1F *h1= new TH1F(histoname, variabile+"_"+channel, nbins, xmin, xmax);
-  if(syst.EqualTo("jesUp") || syst.EqualTo("jesDown")){
+  if(syst.EqualTo("jesUp") || syst.EqualTo("jesDown") || syst.EqualTo("jerUp") || syst.EqualTo("jerDown")){
     treename = "events_"+njmt+"_"+syst;
     taglio ="w_nominal*"+peso;
     foutput = "Plot/"+lep+"/"+channel+"_"+lep+"_"+syst+".root"; 

@@ -155,18 +155,29 @@ def DDQCDEle(inpath_, outpath_, histoname, syst_, samples_, cut_tag_, code_tag_,
     fdataanti = TFile.Open(inpath_+"/"+str(lep_).strip('[]')+"antiiso/Data_"+str(lep_).strip('[]')+"antiiso.root")
     print inpath_+"/"+str(lep_).strip('[]')+"antiiso/Data_"+str(lep_).strip('[]')+"antiiso.root"
     hdataanti = (TH1F)(fdataanti.Get(histoname))
-    print hdataanti.Integral()
+    sumMCanti = hdataanti.Clone()
+    sumMCanti.Reset("ICES")
+    print "Integrale Data anti iso:", hdataanti.Integral()
     fdataiso = TFile.Open(inpath_+"/"+str(lep_).strip('[]')+"/Data_"+str(lep_).strip('[]')+".root")
     hdataiso = (TH1F)(fdataiso.Get(histoname))
-    print hdataiso.Integral()
+    print "Integrale Data iso:", hdataiso.Integral()
     for inf in infileanti: 
         inf.cd()
         print "opening file: ", inf.GetName()
         tmp = (TH1F)(inf.Get(histoname))
         tmp.SetOption("HIST SAME")
-        hdataanti.Add(tmp, -0.47)
-        print "l'integrale di Dati-MC antiiso: ", hdataanti.Integral()
+        sumMCanti.Add(tmp)
+        print "l'integrale di sumMCantiiso: ", sumMCanti.Integral()
+        print "Integrale MC(200,Inf):" , sumMCanti.Integral(hdataanti.FindBin(200),hdataanti.GetNbinsX()+1)
         tmp.Reset("ICES")
+    scalefactor = 0.31
+    doscalefactor = False
+    if histoname == "h_2j1t_mtw": doscalefactor = True
+    if(doscalefactor): scalefactor = hdataanti.Integral(hdataanti.FindBin(200),hdataanti.GetNbinsX()+1)/sumMCanti.Integral(hdataanti.FindBin(200),hdataanti.GetNbinsX()+1)
+    print "Integrale Data(200,Inf):" , hdataanti.Integral(hdataanti.FindBin(200),hdataanti.GetNbinsX()+1)
+    print "Integrale MC(200,Inf):" , sumMCanti.Integral(hdataanti.FindBin(200),hdataanti.GetNbinsX()+1)
+    print "Scale factor:", scalefactor
+    hdataanti.Add(sumMCanti, -scalefactor)
     for inf in infileiso:
         inf.cd()
         print "opening file: ", inf.GetName()
@@ -178,9 +189,9 @@ def DDQCDEle(inpath_, outpath_, histoname, syst_, samples_, cut_tag_, code_tag_,
     if hdataiso.Integral()<0: norm=1.
     else: norm=hdataiso.Integral()
     if("2j1t" in histoname and cut_tag =="mtw_G_50_AND_etajprime_L_2p4"):
-         hdataanti.Scale(0.90*norm/hdataanti.Integral())
+         hdataanti.Scale(1.34*0.90*norm/hdataanti.Integral())
     elif("2j1t" in histoname and cut_tag =="mtw_G_50_AND_etajprime_G_2p4"):
-         hdataanti.Scale(0.91*norm/hdataanti.Integral())
+         hdataanti.Scale(1.34*0.91*norm/hdataanti.Integral())
     elif("3j1t" in histoname and cut_tag =="mtw_G_50_AND_etajprime_L_2p4"):
          hdataanti.Scale(0.01*norm/hdataanti.Integral())
     elif("3j1t" in histoname and cut_tag =="mtw_G_50_AND_etajprime_G_2p4"):
@@ -530,8 +541,7 @@ if lep=="electronantiiso" and opt.topol != "3j2t":
 
 variabili_2j1t = [] 
 wzero = "((((((((leadingextrajetcsvweight_sd>0.0)*(leadingextrajetcsvweight_sd))/0.154)+(leadingextrajetcsvweight_sd==0))*(nextrajets>0)+(nextrajets==0))))*w)"
-
-#variabili_2j1t.append(variabile("etajprime", "|#eta_{j^{,}}|",wzero+"*("+cut+")", 12, 0, 6))
+variabili_2j1t.append(variabile("etajprime", "|#eta_{j^{,}}|",wzero+"*("+cut+")", 50, 0, 5))
 #variabili_2j1t.append(variabile("jprimeflavour","j^{,} flavour",wzero+"*("+cut+")", 12, -6, 6))
 #variabili_2j1t.append(variabile("bjetflavour","b-jet flavour",wzero+"*("+cut+")", 12, -6, 6))
 #variabili_2j1t.append(variabile("bjeteta","|#eta_{b-jet}|",wzero+"*("+cut+")", 48, -6, 6))
@@ -564,8 +574,8 @@ wzero = "((((((((leadingextrajetcsvweight_sd>0.0)*(leadingextrajetcsvweight_sd))
 #variabili_2j1t.append(variabile("leadingextrajeteta","leadingextrajeteta",wzero+"*("+cut+")", 48, -6, 6))
 #variabili_2j1t.append(variabile("leadingextrajetcsv","leadingextrajetCMVAv2",wzero+"*("+cut+")", 60, -5, 1))
 #variabili_2j1t.append(variabile("BDT_All_vs_QCDMu","BDT All vs QCDMu",wzero+"*("+cut+")", 50, -1, 1))
-variabili_2j1t.append(variabile("BDT_ST_vs_TT_mtweta","ST vs TT qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
-variabili_2j1t.append(variabile("BDT_ST_vs_VJ_mtweta","ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
+#variabili_2j1t.append(variabile("BDT_ST_vs_TT_mtweta","ST vs TT qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
+#variabili_2j1t.append(variabile("BDT_ST_vs_VJ_mtweta","ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
 #variabili_2j1t.append(variabile("BDT_ST_vs_TT_mtweta_E","ST vs TT qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
 #variabili_2j1t.append(variabile("BDT_ST_vs_VJ_mtweta_E","ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
 #variabili_2j1t.append(variabile("BDT_STsd_vs_All_sr","STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 50, -1, 1))
@@ -579,10 +589,11 @@ variabili_3j1t = []
 wzero = "(((((leadingextrajetcsvweight_sd>0.0)*(leadingextrajetcsvweight_sd))/0.154)+(leadingextrajetcsvweight_sd==0))*w)"
 #variabili_3j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 60, 0, 300))
 #variabili_3j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 50, 50, 300))
-#variabili_3j1t.append(variabile("leadingextrajetcsv","leadingextrajetCMVAv2",wzero+"*("+cut+")", 20, -1, 1))
+#variabili_3j1t.append(variabile("MET","MET",wzero+"*("+cut+")", 50, 0, 600))
+#variabili_3j1t.append(variabile("leadingextrajetcsv","leading extra jet CMVA",wzero+"*("+cut+")", 20, -1, 1))
 #variabili_3j1t.append(variabile("etajprime","|#eta_{j^{,}}|",wzero+"*("+cut+")", 12, 0, 6))
-#variabili_3j1t.append(variabile("leadingextrajeteta","leadingextrajeteta",wzero+"*("+cut+")", 48, -6, 6))
-#variabili_3j1t.append(variabile("nextrajets","nextrajets",wzero+"*("+cut+")", 6, 0, 6))
+#variabili_3j1t.append(variabile("leadingextrajeteta","leading extra jet #eta",wzero+"*("+cut+")", 24, -6, 6))
+#variabili_3j1t.append(variabile("nextrajets","no. extra jets",wzero+"*("+cut+")", 6, 0, 6))
 '''
 variabili_3j1t.append(variabile("mt2w","mt2w",wzero+"*("+cut+")", 50, 0, 600))
 variabili_3j1t.append(variabile("jprimeflavour","j^{,} flavour",wzero+"*("+cut+")", 12, -6, 6))
@@ -613,10 +624,10 @@ variabili_3j1t.append(variabile("leadingextrajetpt","leadingextrajetpt",wzero+"*
 variabili_3j1t.append(variabile("BDT_STsd_vs_TT_sr_3j1t","BDT STsd vs TT sr",wzero+"*("+cut+")", 50, -1, 1))
 variabili_3j1t.append(variabile("BDT_All_vs_QCDMu_mtw_3j1t","BDT All vs QCDMu",wzero+"*("+cut+")", 50, -1, 1))
 '''
-variabili_3j1t.append(variabile("BDT_ST_vs_TT_mtweta_3j1t","ST vs TT qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
-variabili_3j1t.append(variabile("BDT_ST_vs_VJ_mtweta_3j1t","ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
-#variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t","STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 50, -1, 1))
-#variabili_3j1t.append(variabile("BDT_STsd_vs_ST_sr_3j1t","STsd+TTsd vs STb sr",wzero+"*("+cut+")", 50, -1, 1))
+#variabili_3j1t.append(variabile("BDT_ST_vs_TT_mtweta_3j1t","ST vs TT qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
+#variabili_3j1t.append(variabile("BDT_ST_vs_VJ_mtweta_3j1t","ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
+variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t","STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 50, -1, 1))
+variabili_3j1t.append(variabile("BDT_STsd_vs_ST_sr_3j1t","STsd+TTsd vs STb sr",wzero+"*("+cut+")", 50, -1, 1))
 #variabili_3j1t.append(variabile("BDT_ST_vs_TT_mtweta_3j1t_E","ST vs TT qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
 #variabili_3j1t.append(variabile("BDT_ST_vs_VJ_mtweta_3j1t_E","ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 50, -1, 1))
 #variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t_E","STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 50, -1, 1))
@@ -625,7 +636,7 @@ variabili_3j1t.append(variabile("BDT_ST_vs_VJ_mtweta_3j1t","ST vs VJ qcd-depl cr
 variabili_3j2t = [] 
 wzero = "w"
 
-#variabili_3j2t.append(variabile("mtw","mtw [GeV/c^{2}]",wzero+"*("+cut+")", 60, 0, 300))
+#variabili_3j2t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 60, 0, 300))
 #variabili_3j2t.append(variabile("etajprime","|#eta_{j^{,}}|",wzero+"*("+cut+")", 10, 0, 5))
 #variabili_3j2t.append(variabile("MET","MET",wzero+"*("+cut+")", 50, 0, 600))
 #variabili_3j2t.append(variabile("mt2w","mt2w",wzero+"*("+cut+")", 50, 0, 600))
@@ -647,8 +658,8 @@ wzero = "w"
 #variabili_3j2t.append(variabile("topEtaSecond","#eta_{top} second",wzero+"*("+cut+")", 48, -6, 6))
 #variabili_3j2t.append(variabile("costhetaelSecond","cos #theta_{hel} leading",wzero+"*("+cut+")", 10, -1, 1))
 #variabili_3j2t.append(variabile("costhetapolSecond","cos #theta_{pol} second",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t","ST vs TT",wzero+"*("+cut+")", 50, -1, 1))
-variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t_E","ST vs TT",wzero+"*("+cut+")", 50, -1, 1))
+variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t","ST vs TT",wzero+"*("+cut+")", 50, -1, 1))
+#variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t_E","ST vs TT",wzero+"*("+cut+")", 50, -1, 1))
 
 systematics = []
 if opt.syst!="all" and opt.syst!="noSyst":
@@ -667,6 +678,8 @@ else:
     systematics.append("lepDown")
     systematics.append("jesUp")
     systematics.append("jesDown")
+    systematics.append("jerUp")
+    systematics.append("jerDown")
     systematics.append("q2Up")
     systematics.append("q2Down")
     systematics.append("pdf_totalUp")
@@ -706,7 +719,6 @@ trainings_2j1t_E.append("STsd_vs_All_sr_E")
 trainings_2j1t_E.append("STsd_vs_ST_sr_E")
 #trainings_2j1t_E.append("STsd_vs_All_sr_E")
 trainings_3j1t_E = []
-#trainings_3j1t_E.append("All_vs_QCDMu_mtw_3j1t_E")
 trainings_3j1t_E.append("ST_vs_TT_mtweta_3j1t_E")
 trainings_3j1t_E.append("ST_vs_VJ_mtweta_3j1t_E")
 trainings_3j1t_E.append("STsd_vs_All_sr_3j1t_E")
@@ -740,7 +752,7 @@ if opt.mertree:
 #    os.system("source trees/merge_Data.csh") #da migliorare con una funzione che cerca all'interno della cartella trees tutti i file che contengano la stringa "*SingleMuon*" e che non contengano la stringa 'part'... tentativo fatto con il comando "find ./trees -name '*SingleMuon*' -print0 | xargs -0 grep -L '_part'" ma sopravvive un file con la stringa part senza un'apparente ragione
           print "copying Data in folder tree_lumi"
           os.system("cp trees/"+str(lep).strip('[]')+"/trees_Data_"+str(lep).strip('[]')+".root trees_lumi/"+str(lep).strip('[]')+"/trees_Data_"+str(lep).strip('[]')+".root")
-
+           
 print "mva option is ", opt.mva
 if opt.mva:
      for lep in leptons:
@@ -750,14 +762,14 @@ if opt.mva:
                     for train in trainings_2j1t:
                          makeBDT("macro_BDT.C", "Data", njmt, train, "", str(lep).strip('[]')) 
                          for syst in systematics:
-                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")):
+                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")or(syst=="jerUp")or(syst=="jerDown")):
                                    for sample in samples:
                                         makeBDT("macro_BDT.C", sample.label, njmt, train, syst, str(lep).strip('[]')) 
                else:
                     for train in trainings_2j1t_E:
                          makeBDT("macro_BDT.C", "Data", njmt, train, "", str(lep).strip('[]')) 
                          for syst in systematics:
-                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")):
+                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")or(syst=="jerUp")or(syst=="jerDown")):
                                    for sample in samples:
                                         makeBDT("macro_BDT.C", sample.label, njmt, train, syst, str(lep).strip('[]')) 
 
@@ -767,14 +779,14 @@ if opt.mva:
                     for train in trainings_3j1t:
                          makeBDT("macro_BDT.C", "Data", njmt, train, "", str(lep).strip('[]')) 
                          for syst in systematics:
-                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")):
+                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")or(syst=="jerUp")or(syst=="jerDown")):
                                    for sample in samples:
                                         makeBDT("macro_BDT.C", sample.label, njmt, train, syst, str(lep).strip('[]')) 
                else:
                     for train in trainings_3j1t_E:
                          makeBDT("macro_BDT.C", "Data", njmt, train, "", str(lep).strip('[]')) 
                          for syst in systematics:
-                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")):
+                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")or(syst=="jerUp")or(syst=="jerDown")):
                                    for sample in samples:
                                         makeBDT("macro_BDT.C", sample.label, njmt, train, syst, str(lep).strip('[]')) 
 
@@ -784,14 +796,14 @@ if opt.mva:
                     for train in trainings_3j2t:
                          makeBDT("macro_BDT.C", "Data", njmt, train, "", str(lep).strip('[]')) 
                          for syst in systematics:
-                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")):
+                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")or(syst=="jerUp")or(syst=="jerDown")):
                                    for sample in samples:
                                         makeBDT("macro_BDT.C", sample.label, njmt, train, syst, str(lep).strip('[]')) 
                else:
                     for train in trainings_3j2t_E:
                          makeBDT("macro_BDT.C", "Data", njmt, train, "", str(lep).strip('[]')) 
                          for syst in systematics:
-                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")):
+                              if((syst=="")or(syst=="jesUp")or(syst=="jesDown")or(syst=="jerUp")or(syst=="jerDown")):
                                    for sample in samples:
                                         makeBDT("macro_BDT.C", sample.label, njmt, train, syst, str(lep).strip('[]')) 
 
@@ -1117,9 +1129,9 @@ def stack_h1D(njmt_, region_, syst_, samples_, code_tag_, lep_):
 #    setTDRStyle() 
     leg_stack.AddEntry(hdata, "Data", "lp")
     if(signal):
-        leg_stack.AddEntry(hsig, "t #rightarrow sd + sd #rightarrow t", "l")
+        leg_stack.AddEntry(hsig, "|V_{td,s}|^{2} proc. (#times 100)", "l")
     for hist in reversed(histo):
-         if (tmp.GetName())=="t, t-ch_sd" or (tmp.GetName())=="t, t-ch_p_sd" or (tmp.GetName())=="t#bar{t}_{sd}":
+         if not(tmp.GetName())=="t, t-ch_sd" or (tmp.GetName())=="t, t-ch_p_sd" or (tmp.GetName())=="t#bar{t}_{sd}":
               leg_stack.AddEntry(hist, hist.GetName(), "f")
     hratio = (stack.GetStack()).Last()
     #style options
@@ -1193,7 +1205,7 @@ def stack_h1D(njmt_, region_, syst_, samples_, code_tag_, lep_):
         nJmT="3J1T"
     if(njmt_=="3j2t"):
         nJmT="3J2T"
-    lumi_sqrtS = str(njmt_)+" 35.89 pb^{-1}  (13 TeV)"
+    lumi_sqrtS = str(nJmT)+" 35.89 pb^{-1}  (13 TeV)"
 #    print lumi_sqrtS
     iPeriod = 0
     iPos = 11
@@ -1277,7 +1289,7 @@ def stack_h1D(njmt_, region_, syst_, samples_, code_tag_, lep_):
         samples_[samples_.index(samplesDictionary["DDQCD"]):samples_.index(samplesDictionary["DDQCD"])+1]=[samplesDictionary["QCDMu"]]
 
 
-stack= False # True #
+stack = False # True #
 if(stack):
     for lep in leptons:
         njmt="2j1t"
