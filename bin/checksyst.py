@@ -89,11 +89,10 @@ else:
     systematics.append("btag")  
     systematics.append("mistag")
     systematics.append("pu")
-#    '''
     systematics.append("lepMu")
     systematics.append("lepE")
     systematics.append("jes")
-#    systematics.append("jer")
+    systematics.append("jer")
     systematics.append("q2ST_tch")
     systematics.append("q2ST_tch_sd")
     systematics.append("q2TT")
@@ -105,26 +104,31 @@ else:
     systematics.append("hdampST_tch")
     systematics.append("hdampTT")
     systematics.append("pdf_total")
-#    '''
+    systematics.append("cmvacferr1")
+    systematics.append("cmvahfstats1")
+    systematics.append("cmvahfstats2")
+    systematics.append("cmvalfstats1")
+    systematics.append("cmvalfstats2")
+
 
 histonamesMu = []
-histonamesMu.append("h1D_2j1t_cr_3838")
-histonamesMu.append("h1D_2j1t_sr_3838")
-histonamesMu.append("h1D_3j1t_cr_3838")
-histonamesMu.append("h1D_3j1t_sr_3838")
+histonamesMu.append("h1D_2j1t_cr")
+histonamesMu.append("h1D_2j1t_sr")
+histonamesMu.append("h1D_3j1t_cr")
+histonamesMu.append("h1D_3j1t_sr")
 histonamesMu.append("h_3j2t_BDT_ST_vs_TT_3j2t")
 
 histonamesE = []
-histonamesE.append("h1D_2j1t_cr_3838")
-histonamesE.append("h1D_2j1t_sr_3838")
-histonamesE.append("h1D_3j1t_cr_3838")
-histonamesE.append("h1D_3j1t_sr_3838")
+histonamesE.append("h1D_2j1t_cr")
+histonamesE.append("h1D_2j1t_sr")
+histonamesE.append("h1D_3j1t_cr")
+histonamesE.append("h1D_3j1t_sr")
 histonamesE.append("h_3j2t_BDT_ST_vs_TT_3j2t_E")
 
 lumi=35.89
 
 print "Deleting old text files"
-os.system("rm checksyst/*")
+os.system("rm -r checksyst/*")
 
 for s in samples:
      for lep in leptons:

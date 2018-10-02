@@ -43,13 +43,11 @@ usage = ''
 parser = optparse.OptionParser(usage)
 #Output files/directory
 parser.add_option('-o', '--outputpath',        dest='outputpath',  type='string',     default = '.',  help='output for root files')
-
 #Input files:
 parser.add_option('-f', '--filepath',        dest='filepath',  type='string',     default = './files/final/',      help='files with the trees location, default to the afs area where the latest version is always located')
 parser.add_option('-l', '--localpath',        dest='localpath',  type='string',     default = '/afs/cern.ch/work/w/wajid/NapoliFW/CMSSW_8_0_20/src/Analysis/NAAnaFW/bin/ST/')
 #Target process
 parser.add_option('-P', '--process',        dest='process',  type='string',     default = 'all', help="samples to add, according to the convention in 'script_rename.py'. Options are: 'All','ST','VJ','VV','QCDMu','QCDEle', or '_'+specific process, e.g. _ST_T_tch to add only the _ST_T_tch. Accepts also multiple processes, separated by comma, e.g. -P ST,_TT,VJ will select the V+jets samples and single top sample sets, as well as the one sample named TT.")
-
 #Details of the analysis step:
 parser.add_option('-c', '--channel',  dest='channel', type='string',     default = 'muon', help='Channel to analyze: singleH or singleZ')
 parser.add_option('-C', '--cat',      dest='cat',     type='string',     default = 'CMVAT',    help='Category to analyze: cat0 or cat1 or cat2')

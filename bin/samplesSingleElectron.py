@@ -1,0 +1,9 @@
+samples=[]
+samples.append("SingleElectron_Run2016B-03Feb2017_ver2-v2")
+samples.append("SingleElectron_Run2016C-03Feb2017-v1")
+samples.append("SingleElectron_Run2016D-03Feb2017-v1")
+samples.append("SingleElectron_Run2016E-03Feb2017-v1")
+samples.append("SingleElectron_Run2016F-03Feb2017-v1")
+samples.append("SingleElectron_Run2016G-03Feb2017-v1")
+samples.append("SingleElectron_Run2016H-03Feb2017_ver2-v1")
+samples.append("SingleElectron_Run2016H-03Feb2017_ver3-v1")

@@ -27,8 +27,14 @@ def formSamples(proclist):
         if proc=="ST_sd_reshaped" or isAllProcesses:
             from samplesST_sd_reshaped import samples as stemp
             samp.extend(stemp)
+        if proc=="ST_sd_reshaped_improv" or isAllProcesses:
+            from samplesST_sd_reshaped_improv import samples as stemp
+            samp.extend(stemp)
         if proc=="TT" or isAllProcesses:
             from samplesTT import samples as stemp
+            samp.extend(stemp)
+        if proc=="TT_sd" or isAllProcesses:
+            from samplesTT_sd import samples as stemp
             samp.extend(stemp)
         if proc=="SystsTop" or isAllProcesses:
             from samplesSystsTop import samples as stemp
@@ -36,9 +42,13 @@ def formSamples(proclist):
         if proc=="VJ" or isAllProcesses:
             from samplesVJ import samples as stemp
             samp.extend(stemp)
+        if proc=="WJets_ext" or isAllProcesses:
+            from samplesWJets_ext import samples as stemp
+            samp.extend(stemp)
         if proc=="VV" or isAllProcesses:
             from samplesVV import samples as stemp
             samp.extend(stemp)
+        '''
         if proc=="QCDMu" or isAllProcesses:
             from samplesQCDMu import samples as stemp
             samp.extend(stemp)
@@ -50,6 +60,7 @@ def formSamples(proclist):
             samp.extend(stemp)
         if proc.startswith("_"):
             samp.append(proc[1:])
+        '''    
     return samp
 
 def remove_folder(path):
