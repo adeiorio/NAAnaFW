@@ -1,38 +1,69 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TH2F.h"
-//#include "TTree.h"
 
 using namespace std;
 void macro_2Dhisto(TString channel, TString njmt, TString syst, TString region, TString BDT1_name, TString BDT2_name, TString lep){
   if((lep=="electron"||lep=="electronantiiso")&& channel=="QCDMuPt20toInf") return;
   if((lep=="muonantiiso"||lep=="electronantiiso") && channel=="TT_sd") return;
   if((channel.Contains("hdamp")||channel.Contains("psq2"))&&((lep=="muonantiiso"||lep=="electronantiiso")||(syst!=""))) return;
-  TFile * f=TFile::Open("trees_lumi/"+lep+"/trees_"+channel+"_"+lep+".root");
+  TFile * f = TFile::Open("trees_lumi/"+lep+"/trees_"+channel+"_"+lep+".root");
   TString treename, histoname;
   TH2F * h2 = new TH2F("h2", "h2",10,-1,1,10,-1,1);
   //  Float_t BDT1, BDT2, etajprime, mtw, w, w_nominal, var_syst; 
   gStyle->SetOptStat(0);
+  h2->Sumw2();
   TString outfilename, taglio, selection;
   selection = "BDT_"+BDT1_name+":BDT_"+BDT2_name;
   if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")) treename = "events_"+njmt+"_"+syst;
   else treename = "events_"+njmt;
   TTree * t =(TTree*)f->Get(treename);
-  if(region=="cr") taglio = "(mtw>50 && etajprime<2.4";
-  else taglio = "(mtw>50 && etajprime>2.4";
-  if(lep=="electronantiiso") taglio += " &&mlb>30";
-  if(syst.EqualTo("")){
+  if(region=="cr") taglio = "(mtw>50 && etajprime<2.5";
+  else taglio = "(mtw>50 && etajprime>2.5";
+  if(channel.EqualTo("Data")){
     histoname = "h2D_"+njmt+"_"+channel+"_"+region;
-    t->Project("h2",selection,taglio+")*w*w_nominal");
+    t->Project("h2",selection,taglio+")*(w*w_nominal)");
   }
   else{
-    if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")){
-      histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
-      t->Project("h2",selection,taglio+")*w*w_nominal");
+    if(njmt.EqualTo("2j1t")){
+      if(syst.EqualTo("")){
+	histoname = "h2D_"+njmt+"_"+channel+"_"+region;
+	t->Project("h2",selection,taglio+")*(w*((abs(leadingextrajetcsvweight)*(nextrajets>0))+(nextrajets==0)))*w_nominal");
+      }
+      else{
+	if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")){
+	  histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
+	  t->Project("h2",selection,taglio+")*(w*(abs(leadingextrajetcsvweight)*(nextrajets>0)+(nextrajets==0)))*w_nominal");
+	}      
+	else if(syst.Contains("cmva")){  
+	  histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
+	  t->Project("h2",selection,taglio+")*(w*((abs("+syst+")*abs(leadingextrajetcsvweight)*(nextrajets>0))+((w_nominal)*(nextrajets==0))))");
+	}
+	else{
+	  histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
+	  t->Project("h2",selection,taglio+")*(w*(abs(leadingextrajetcsvweight)*(nextrajets>0)+(nextrajets==0)))*"+syst);
+	}
+      }
     }
-    else{
-      histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
-      t->Project("h2",selection,taglio+")*w*"+syst);
+    if(njmt.EqualTo("3j1t")){
+      if(syst.EqualTo("")){
+	histoname = "h2D_"+njmt+"_"+channel+"_"+region;
+	t->Project("h2",selection,taglio+")*(w*(abs(leadingextrajetcsvweight)))*w_nominal");
+      }
+      else{
+	if(syst.EqualTo("jesUp")||syst.EqualTo("jesDown")||syst.EqualTo("jerUp")||syst.EqualTo("jerDown")){
+	  histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
+	  t->Project("h2",selection,taglio+")*(w*abs(leadingextrajetcsvweight))*w_nominal");
+	}      
+	else if(syst.Contains("cmva")){  
+	  histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
+	  t->Project("h2",selection,taglio+")*(w*abs("+syst+")*abs(leadingextrajetcsvweight))");
+	}
+	else{
+	  histoname = "h2D_"+njmt+"_"+channel+"_"+region+"_"+syst;
+	  t->Project("h2",selection,taglio+")*(w*abs(leadingextrajetcsvweight))*"+syst);
+	}
+      }
     }
   }
   h2->SetName(histoname);
@@ -53,8 +84,8 @@ void macro_2Dhisto(TString channel, TString njmt, TString syst, TString region, 
   Float_t labelSize = 0.040;
   h2->GetXaxis()->SetLabelSize( labelSize );
   h2->GetYaxis()->SetLabelSize( labelSize );
-  h2->GetXaxis()->SetTitle( "BDT_"+BDT1_name );
-  h2->GetYaxis()->SetTitle( "BDT_"+BDT2_name );
+  h2->GetXaxis()->SetTitle( "BDT_"+BDT2_name );
+  h2->GetYaxis()->SetTitle( "BDT_"+BDT1_name );
   //  h2->LabelsOption( "d" );
   h2->SetLabelOffset( 0.011 );// label offset on x axis    
   h2->Draw("colz"); // color pads   

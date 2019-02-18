@@ -264,18 +264,12 @@ systematics.append("cmvalfstats2")
 
 for ps in poorstats:
     for ch in channels:
-        if ch == "muon":
-            smoothing(opt.path + "/fit/"+ps+"_"+ch+".root","h_3j2t_BDT_ST_vs_TT_3j2t")
-            for v in vs:
-                for s in systematics:
-                    smoothing(opt.path + "/fit/"+ps+"_"+ch+"_"+s+v+".root","h_3j2t_BDT_ST_vs_TT_3j2t")
-        else:
-            smoothing(opt.path + "/fit/"+ps+"_"+ch+".root","h_3j2t_BDT_ST_vs_TT_3j2t")
-            for v in vs:
-                for s in systematics:
-                    smoothing(opt.path + "/fit/"+ps+"_"+ch+"_"+s+v+".root","h_3j2t_BDT_ST_vs_TT_3j2t")
+        smoothing(opt.path + "/fit/"+ps+"_"+ch+".root","h_3j2t_BDT_ST_vs_TT_3j2t")
+        for v in vs:
+            for s in systematics:
+                smoothing(opt.path + "/fit/"+ps+"_"+ch+"_"+s+v+".root","h_3j2t_BDT_ST_vs_TT_3j2t")
 
-merger = False
+merger = True
 if(merger):
     for sy in allsysts:
         for v in vs:
@@ -292,18 +286,32 @@ for v in vs:
     for ch in channels:
         for syst in cmvasyst:   
             bfcopy(ch, "ST_tch_sd", syst, v)
+
 #Function to add statistical uncertainties to MC samples
-#var = {"h_2j1t_BDT_ST_vs_VJ_mtweta_mtw_G_50_AND_etajprime_L_2p5":"muon_2j1t_central", "h_2j1t_BDT_STsd_vs_ST_sr_mtw_G_50_AND_etajprime_G_2p5":"muon_2j1t_forward", "h_3j1t_BDT_ST_vs_VJ_mtweta_3j1t_mtw_G_50_AND_etajprime_L_2p5":"muon_3j1t_central", "h_3j1t_BDT_STsd_vs_ST_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"muon_3j1t_forward", "h_3j2t_BDT_ST_vs_TT_3j2t":"muon_3j2t"}
-#varE = {"h_2j1t_BDT_ST_vs_VJ_mtweta_mtw_G_50_AND_etajprime_L_2p5":"electron_2j1t_central", "h_2j1t_BDT_STsd_vs_ST_sr_mtw_G_50_AND_etajprime_G_2p5":"electron_2j1t_forward", "h_3j1t_BDT_ST_vs_VJ_mtweta_3j1t_mtw_G_50_AND_etajprime_L_2p5":"electron_3j1t_central", "h_3j1t_BDT_STsd_vs_ST_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"electron_3j1t_forward", "h_3j2t_BDT_ST_vs_TT_3j2t":"electron_3j2t"}
-var = {"h1D_2j1t_cr":"muon_2j1t_central", "h1D_2j1t_sr":"muon_2j1t_forward", "h1D_3j1t_cr":"muon_3j1t_central", "h1D_3j1t_sr":"muon_3j1t_forward", "h_3j2t_BDT_ST_vs_TT_3j2t":"muon_3j2t"}
-varE = {"h1D_2j1t_cr":"electron_2j1t_central", "h1D_2j1t_sr":"electron_2j1t_forward", "h1D_3j1t_cr":"electron_3j1t_central", "h1D_3j1t_sr":"electron_3j1t_forward", "h_3j2t_BDT_ST_vs_TT_3j2t":"electron_3j2t"}
-#var = {"h_2j1t_topMass_mtw_G_50_AND_etajprime_L_2p5":"muon_2j1t_central", "h_2j1t_topMass_mtw_G_50_AND_etajprime_G_2p5":"muon_2j1t_forward", "h_3j1t_topMass_mtw_G_50_AND_etajprime_L_2p5":"muon_3j1t_central", "h_3j1t_topMass_mtw_G_50_AND_etajprime_G_2p5":"muon_3j1t_forward", "h_3j2t_topMassLeading":"muon_3j2t"}
-#varE = {"h_2j1t_topMass_mtw_G_50_AND_etajprime_L_2p5":"electron_2j1t_central", "h_2j1t_topMass_mtw_G_50_AND_etajprime_G_2p5":"electron_2j1t_forward", "h_3j1t_topMass_mtw_G_50_AND_etajprime_L_2p5":"electron_3j1t_central", "h_3j1t_topMass_mtw_G_50_AND_etajprime_G_2p5":"electron_3j1t_forward", "h_3j2t_topMassLeading":"electron_3j2t"}
+#var = {"h_2j1t_BDT_ST_vs_All_mtw_G_50_AND_BDT_ST_vs_All_G_-0p1":"muon_2j1t", "h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"muon_3j1t_forward", "h_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5_AND_leadingextrajetcsv_L_-0p6":"muon_3j1t_forward", "h_3j2t_BDT_ST_vs_TT_3j2t_BDT_ST_vs_TT_3j2t_G_-0p1":"muon_3j2t"}
+#varE = {"h_2j1t_BDT_ST_vs_All_mtw_G_50_AND_BDT_ST_vs_All_G_-0p1":"electron_2j1t", "h_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5_AND_leadingextrajetcsv_L_-0p6":"electron_3j1t_forward", "h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"electron_3j1t_forward", "h_3j2t_BDT_ST_vs_TT_3j2t_BDT_ST_vs_TT_3j2t_G_-0p1":"electron_3j2t"}
+
+var = {
+"h_2j1t_BDT_ST_vs_All_mtw_G_50":"muon_2j1t",
+"h_2j1t_BDT_ST_vs_All_2_mtw_G_50":"muon_2j1t",
+"h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"muon_3j1t_forward",
+"h_3j2t_BDT_ST_vs_TT_3j2t":"muon_3j2t",
+"h_3j2t_BDT_ST_vs_TT_3j2t_2":"muon_3j2t"
+}
+varE = {
+"h_2j1t_BDT_ST_vs_All_mtw_G_50":"electron_2j1t",
+"h_2j1t_BDT_ST_vs_All_2_mtw_G_50":"electron_2j1t",
+"h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"electron_3j1t_forward",
+"h_3j2t_BDT_ST_vs_TT_3j2t":"electron_3j2t",
+"h_3j2t_BDT_ST_vs_TT_3j2t_2":"electron_3j2t"
+}
+'''
 for ch in channels:
     if ch == "electron": 
         [makeBinHistos(v,ch) for v in varE.keys()]
     elif ch == "muon": 
         [makeBinHistos(v,ch) for v in var.keys()]
+'''
 
 process_to_scale = []
 process_to_scale.append("WJets_ext")
@@ -319,3 +327,16 @@ for ch in channel_to_scale:
                 print "Scaling the histos of the %s%s%s " % (ps, s, v) 
                 scale(opt.path + "/fit/"+ps+"_"+ch+"_"+s+v+".root", 0.1)
 
+histo = {
+#"h_2j1t_BDT_ST_vs_All_mtw_G_50":"muon_2j1t",
+"h_2j1t_BDT_ST_vs_All_2_mtw_G_50":"muon_2j1t",
+"h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5":"muon_3j1t_forward",
+"h_3j2t_BDT_ST_vs_TT_3j2t":"muon_3j2t"
+#,"h_3j2t_BDT_ST_vs_TT_3j2t_2":"muon_3j2t"
+}
+
+for h in histo:
+    for ch in channels:
+        for v in vs:
+#            for s in systematics:
+                smoothing(opt.path + "/fit/"+ps+"_"+ch+"_jes"+v+".root", h)

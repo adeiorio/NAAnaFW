@@ -137,7 +137,7 @@ def DDQCD(inpath_, outpath_, histoname, syst_, samples_, cut_tag_, code_tag_, re
          if("2j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_L_2p5" or region == "cr")):
               hdataanti.Scale(1.46*syst_SF*norm/hdataanti.Integral())
          elif("2j1t" in histoname and cut_tag =="mtw_G_50"):
-              hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
+              hdataanti.Scale(0.13)#syst_SF*norm/hdataanti.Integral())
          elif("2j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_G_2p5" or region == "sr")):
               hdataanti.Scale(1.10*syst_SF*norm/hdataanti.Integral())
          elif("3j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_L_2p5" or region == "cr")):
@@ -149,24 +149,25 @@ def DDQCD(inpath_, outpath_, histoname, syst_, samples_, cut_tag_, code_tag_, re
          elif("3j2t" in histoname):
               hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
          else:
-              hdataanti.Scale(1.*syst_SF*norm/hdataanti.Integral())
+#              hdataanti.Scale(1.*syst_SF*norm/hdataanti.Integral())
+              hdataanti.Scale(1.)#*syst_SF*norm/hdataanti.Integral())
     else:
          if("2j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_L_2p5" or region == "cr")):
               hdataanti.Scale(0.83*syst_SF*norm/hdataanti.Integral())
          elif("2j1t" in histoname and cut_tag =="mtw_G_50"):
-              hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
+              hdataanti.Scale(0.31)#syst_SF*norm/hdataanti.Integral())
          elif("2j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_G_2p5" or region == "sr")):
               hdataanti.Scale(1.09*syst_SF*norm/hdataanti.Integral())
          elif("3j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_L_2p5" or region == "cr")):
               hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
          elif("3j1t" in histoname and cut_tag =="mtw_G_50"):
-              hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
+              hdataanti.Scale(0.32)#syst_SF*norm/hdataanti.Integral())
          elif("3j1t" in histoname and (cut_tag =="mtw_G_50_AND_etajprime_G_2p5" or region == "cr")):
-              hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
+              hdataanti.Scale(0.32*24779.7/68780.7)#syst_SF*norm/hdataanti.Integral())
          elif("3j2t" in histoname):
               hdataanti.Scale(syst_SF*norm/hdataanti.Integral())
          else:
-              hdataanti.Scale(1.*syst_SF*norm/hdataanti.Integral())
+              hdataanti.Scale(0.15) #1.*syst_SF*norm/hdataanti.Integral())
     print "l'integrale di DDQCD: ", hdataanti.Integral()
     fout = TFile.Open(outfile, "UPDATE")
     hdataanti.Write()
@@ -311,7 +312,8 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
         tmp.Reset("ICES")
     print "segnale somma", hsig.Integral()
     if(signal):
-        leg_stack.AddEntry(hsig, "|V_{td,s}|^{2} proc. (#times 100)", "l")
+         leg_stack.AddEntry(hsig, "t, t-ch_{d,s} (#times 100)", "l") #|V_{td,s}|^{2} proc.
+#        leg_stack.AddEntry(hsig, "t, t-ch_{d,s}", "l")
 #        leg_stack.AddEntry(hsig, "t_sd(*100)", "l")
     for hist in reversed(histo):
         if (hist.GetName())!="t_sd":
@@ -354,8 +356,12 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
     leg_stack.SetY2(.88)
     
     maximum = max(stack.GetMaximum(),hdata.GetMaximum())
-    minimum = min(stack.GetMinimum(),hdata.GetMinimum())
-    stack.SetMaximum(maximum*1.55)
+    logscale = False # True #
+    if(logscale):
+         pad1.SetLogy()
+         stack.SetMaximum(maximum*10000)
+    else:
+         stack.SetMaximum(maximum*1.6)
     stack.SetMinimum(0.01)
     stack.Draw("HIST") 
     stack.GetYaxis().SetTitle("Events / bin")
@@ -376,15 +382,15 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
         hsig.SetMarkerColor(kBlue)
         hsig.Scale(100)
         hsig.Draw("same L")
-    leg_stack.Draw("same")
     h_err = stack.GetStack().Last().Clone("h_err")
     h_err.SetLineWidth(100)
     h_err.SetFillStyle(3154)
     h_err.SetMarkerSize(0)
     h_err.SetFillColor(ROOT.kGray+2)
     h_err.Draw("e2same0")
-
+    leg_stack.AddEntry(h_err, "Stat. Unc.", "f")
     hdata.Draw("eSAMEpx0")
+    leg_stack.Draw("same")
     
     '''
     for n in range(1,tmp.GetNBins()):
@@ -414,13 +420,16 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
          lep_tag = "#mu+"
     elif str(lep_).strip('[]') == "electron":
          lep_tag = "e+"
-    lumi_sqrtS = lep_tag + str(nJmT)+" 35.89 fb^{-1}  (13 TeV)"
+    latex = ROOT.TLatex()
+#    latex.SetTextSize(0.025)
+#    latex.SetTextAlign(13)  #align at top
+    lumi_sqrtS = "35.9 fb^{-1}  (13 TeV)"
 #    print lumi_sqrtS
     iPeriod = 0
     iPos = 11
     # writing the lumi information and the CMS "logo"
     # Ratio Check HERE
-    CMS_lumi(pad1, lumi_sqrtS, iPos)
+    CMS_lumi(pad1, lumi_sqrtS, iPos, lep_tag+str(nJmT))
     hratio=stack.GetStack().Last()
 
     c1.cd()
@@ -436,8 +445,8 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
     pad2.cd()
     ratio = hdata.Clone("ratio")
     ratio.SetLineColor(kBlack)
-    ratio.SetMaximum(1.5)
-    ratio.SetMinimum(0.5)
+    ratio.SetMaximum(2)
+    ratio.SetMinimum(0)
     ratio.Sumw2()
     ratio.SetStats(0)
     #hratio.Sumw2()
@@ -456,7 +465,7 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
         if(hratio.GetBinContent(i)):
             h_bkg_err.SetBinError(i, (hratio.GetBinError(i)/hratio.GetBinContent(i)))
         else:
-            h_bkg_err.SetBinError(i, 0)
+            h_bkg_err.SetBinError(i, 10^(-99))
     h_bkg_err.SetLineWidth(100)
 #    h_bkg_err.SetFillStyle(3001)
     h_bkg_err.SetMarkerSize(0)
@@ -483,7 +492,7 @@ def makestack(njmt_, variabile_, syst_, samples_, cut_tag_, lep_):
     ratio.GetYaxis().SetLabelSize(0.15)
     ratio.GetXaxis().SetTitleSize(0.16)
     ratio.GetYaxis().SetTitleSize(0.16)
-    ratio.GetYaxis().SetRangeUser(0.5,1.5)
+    ratio.GetYaxis().SetRangeUser(0.7,1.3)
     ratio.GetXaxis().SetTitle(variabile_._title)
     ratio.GetXaxis().SetLabelOffset(0.04)
     ratio.GetYaxis().SetLabelOffset(0.01)
@@ -611,25 +620,25 @@ else:
 variabili_2j1t = [] 
 #wzero = "((((((((leadingextrajetcsvweight_sd>0.0)*(leadingextrajetcsvweight_sd))/0.154)+(leadingextrajetcsvweight_sd==0))*(nextrajets>0)+(nextrajets==0))))*w)"
 wzero = "w"
-#variabili_2j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 10, 0, 250))
 #variabili_2j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 20, 0, 250))
+#variabili_2j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 20, 50, 250))
 #variabili_2j1t.append(variabile("etajprime", "|#eta_{j^{,}}|",wzero+"*("+cut+")", 10, 0, 4.7))
 #variabili_2j1t.append(variabile("jprimeflavour","j^{,} flavour",wzero+"*("+cut+")", 12, -6, 6))
 #variabili_2j1t.append(variabile("bjetflavour","b-jet flavour",wzero+"*("+cut+")", 12, -6, 6))
-#variabili_2j1t.append(variabile("bjeteta","#eta_{b-jet}",wzero+"*("+cut+")", 48, -6, 6))
-#variabili_2j1t.append(variabile("bjetpt","b-jet pT [GeV/c]",wzero+"*("+cut+")", 20, 0, 300))
-#variabili_2j1t.append(variabile("topMass","top mass [GeV/c^{2}]",wzero+"*("+cut+")", 15, 90, 400))
+#variabili_2j1t.append(variabile("bjeteta","#eta_{b-jet}",wzero+"*("+cut+")", 20, -2.4, 2.4))
+#variabili_2j1t.append(variabile("bjetpt","b-jet pT [GeV/c]",wzero+"*("+cut+")", 18, 30, 300))
+#variabili_2j1t.append(variabile("topMass","top mass [GeV/c^{2}]",wzero+"*("+cut+")", 16, 80, 400))
 #variabili_2j1t.append(variabile("topMt","top Mt",wzero+"*("+cut+")", 50, 0, 600))
 #variabili_2j1t.append(variabile("topPt","top pT [GeV/c]",wzero+"*("+cut+")", 18, 0, 350))
 #variabili_2j1t.append(variabile("topY","top Y",wzero+"*("+cut+")", 80, -400, 400))
 #variabili_2j1t.append(variabile("topEta","#eta_{top}",wzero+"*("+cut+")", 48, -6, 6))
 #variabili_2j1t.append(variabile("costhetael","cos#theta*_{hel}",wzero+"*("+cut+")", 10, -1, 1))
 #variabili_2j1t.append(variabile("costhetapol","cos#theta*_{pol}",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_2j1t.append(variabile("mlb","lep+b-jet mass [GeV/c^{2}]",wzero+"*("+cut+")", 19, 20, 400))
-#variabili_2j1t.append(variabile("mljprime","lep+j^{,} mass [GeV/c^{2}]",wzero+"*("+cut+")", 25, 0, 600))
+#variabili_2j1t.append(variabile("mlb","lepton+b-jet mass [GeV/c^{2}]",wzero+"*("+cut+")", 18, 40, 400))
+#variabili_2j1t.append(variabile("mljprime","lep+j^{,} mass [GeV/c^{2}]",wzero+"*("+cut+")", 18, 40, 400))
 #variabili_2j1t.append(variabile("mljextra","lep+j_{extra} Mass",wzero+"*("+cut+")", 25, 0, 600))
 #variabili_2j1t.append(variabile("mt2w","mt2w",wzero+"*(nextrajets>2 && "+cut+")", 50, 0, 600))
-#variabili_2j1t.append(variabile("MET","MET",wzero+"*("+cut+")", 50, 0, 600))
+#variabili_2j1t.append(variabile("MET","MET",wzero+"*("+cut+")", 20, 0, 250))
 #variabili_2j1t.append(variabile("mindeltaphi","mindeltaphi", wzero+"*("+cut+")",20,-5,5))
 #variabili_2j1t.append(variabile("mindeltaphi20", "mindeltaphi20",wzero+"*("+cut+")",20,-5,5))
 #variabili_2j1t.append(variabile("topMassExtra","top Mass Extra",wzero+"*("+cut+")", 50, 50, 600))
@@ -640,17 +649,19 @@ wzero = "w"
 #variabili_2j1t.append(variabile("costhetaelExtra","cos#theta*_{hel} Extra",wzero+"*("+cut+")", 10, -1, 1))
 #variabili_2j1t.append(variabile("costhetapolExtra","cos#theta*_{pol} Extra",wzero+"*("+cut+")", 10, -1, 1))
 #variabili_2j1t.append(variabile("nextrajets","nextrajets",wzero+"*("+cut+")", 6, -0.5, 5.5))
-variabili_2j1t.append(variabile("leadingextrajetflavour","leadingextrajetflavour",wzero+"*("+cut+")", 12, -6, 6))
+#variabili_2j1t.append(variabile("leadingextrajetflavour","leadingextrajetflavour",wzero+"*("+cut+")", 12, -6, 6))
 #variabili_2j1t.append(variabile("leadingextrajetpt","leadingextrajetp_{#mathrm{T}}",wzero+"*("+cut+")", 25, 17, 42))
 #variabili_2j1t.append(variabile("leadingextrajeteta","leadingextrajeteta",wzero+"*("+cut+")", 48, -6, 6))
 #variabili_2j1t.append(variabile("leadingextrajetcsv","leadingextrajetCMVAv2",wzero+"*("+cut+")", 60, -5, 1))
 #variabili_2j1t.append(variabile("BDT_All_vs_QCDMu","BDT All vs QCDMu",wzero+"*("+cut+")", 50, -1, 1))
-#variabili_2j1t.append(variabile("BDT_ST_vs_TT_mtweta","Discriminator ST vs TT qcd-depl cr",wzero+"*("+cut+")", 25, -0.7, 0.5))
+#variabili_2j1t.append(variabile("BDT_ST_vs_TT_mtweta","Discriminator ST vs TT qcd-depl cr",wzero+"*("+cut+")", 25, -0.6, 0.4))
 #variabili_2j1t.append(variabile("BDT_ST_vs_VJ_mtweta","Discriminator ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 15, -0.45, 0.4))
 #variabili_2j1t.append(variabile("BDT_ST_vs_TT_mtweta_E","Discriminator ST vs TT qcd-depl cr",wzero+"*("+cut+")", 25, -0.7, 0.5))
 #variabili_2j1t.append(variabile("BDT_ST_vs_VJ_mtweta_E","Discriminator ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 25, -0.45, 0.4))
-#variabili_2j1t.append(variabile("BDT_STsd_vs_All_sr","Discriminator STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 10, -0.4, 0.3))
-#variabili_2j1t.append(variabile("BDT_STsd_vs_ST_sr","Discriminator STsd+TTsd vs STb sr",wzero+"*("+cut+")", 10, -0.4, 0.2))
+#variabili_2j1t.append(variabile("BDT_STsd_vs_All_sr","Discriminator STsd vs TTb+VJ sr",wzero+"*("+cut+")", 10, -0.4, 0.3))
+#variabili_2j1t.append(variabile("BDT_STsd_vs_ST_sr","Discriminator STsd vs STb sr",wzero+"*("+cut+")", 10, -0.4, 0.25))
+#variabili_2j1t.append(variabile("BDT_ST_vs_All","Discriminator ST vs TT+VJ",wzero+"*("+cut+")", 10, -0.4, 0.4))
+variabili_2j1t.append(variabile("BDT_ST_vs_All_2","Discriminator ST vs TT+VJ",wzero+"*("+cut+")", 10, -0.4, 0.4))
 #variabili_2j1t.append(variabile("BDT_STsd_vs_All_sr_E","Discriminator STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 10, -0.4, 0.3))
 #variabili_2j1t.append(variabile("BDT_STsd_vs_ST_sr_E","Discriminator STsd+TTsd vs STb sr",wzero+"*("+cut+")", 10, -0.45, 0.85))
 
@@ -659,18 +670,18 @@ variabili_3j1t = []
 wzero = "w"
 #variabili_3j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 12, 50, 250))
 #variabili_3j1t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 20, 0, 250))
-#variabili_3j1t.append(variabile("MET","MET",wzero+"*("+cut+")", 50, 0, 600))
+#variabili_3j1t.append(variabile("MET","MET",wzero+"*("+cut+")", 20, 0, 250))
 #variabili_3j1t.append(variabile("leadingextrajetcsv","leading extra jet CMVA",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_3j1t.append(variabile("etajprime","|#eta_{j^{,}}|",wzero+"*("+cut+")", 10, 0, 4.7))
+#variabili_3j1t.append(variabile("etajprime","|#eta_{j^{,}}|",wzero+"*("+cut+")", 15, 2.5, 4.7))
 #variabili_3j1t.append(variabile("leadingextrajeteta","leading extra jet #eta",wzero+"*("+cut+")", 10, -4.2, 4.2))
 #variabili_3j1t.append(variabile("nextrajets","no. extra jets",wzero+"*("+cut+")", 6, -0.5, 5.5))
 #variabili_3j1t.append(variabile("mt2w","mt2w",wzero+"*("+cut+")", 50, 0, 600))
 #variabili_3j1t.append(variabile("jprimeflavour","j^{,} flavour",wzero+"*("+cut+")", 12, -6, 6))
 #variabili_3j1t.append(variabile("mlb","lep+b-jet mass [GeV/c^{2}]",wzero+"*("+cut+")", 25, 0, 500))
-#variabili_3j1t.append(variabile("mljprime","lep+j^{,} mass [GeV/c^{2}]",wzero+"*("+cut+")", 25, 0, 600))
-#variabili_3j1t.append(variabile("mljextra","lep+j_{extra} Mass",wzero+"*("+cut+")", 25, 0, 600))
+#variabili_3j1t.append(variabile("mljprime","lep+j^{,} mass [GeV/c^{2}]",wzero+"*("+cut+")", 25, 0, 500))
+#variabili_3j1t.append(variabile("mljextra","lep+j_{extra} Mass",wzero+"*("+cut+")", 25, 0, 500))
 #variabili_3j1t.append(variabile("bjetflavour","b-jet flavour",wzero+"*("+cut+")", 12, -6, 6))
-#variabili_3j1t.append(variabile("bjeteta","#eta_{b-jet}",wzero+"*("+cut+")", 48, -6, 6))
+#variabili_3j1t.append(variabile("bjeteta","#eta_{b-jet}",wzero+"*("+cut+")", 20, -2.4, 2.4))
 #variabili_3j1t.append(variabile("bjetpt","b-jet pT [GeV/c]",wzero+"*("+cut+")", 20, 0, 300))
 #variabili_3j1t.append(variabile("topMass","top mass [GeV/c^{2}]",wzero+"*("+cut+")", 15, 90, 400))
 #variabili_3j1t.append(variabile("topMt","top Mt",wzero+"*("+cut+")", 50, 0, 600))
@@ -679,7 +690,7 @@ wzero = "w"
 #variabili_3j1t.append(variabile("topEta","#eta_{top}",wzero+"*("+cut+")", 48, -6, 6))
 #variabili_3j1t.append(variabile("costhetael","cos #theta_{hel}",wzero+"*("+cut+")", 10, -1, 1))
 #variabili_3j1t.append(variabile("costhetapol","cos #theta_{pol}",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_3j1t.append(variabile("topMassExtra","top Mass Extra",wzero+"*("+cut+")", 50, 50, 600))
+#variabili_3j1t.append(variabile("topMassExtra","top Mass Extra",wzero+"*("+cut+")", 15, 90, 400))
 #variabili_3j1t.append(variabile("topPtExtra","top P_{#Mathrm{T}} Extra",wzero+"*("+cut+")", 50, 50, 600))
 #variabili_3j1t.append(variabile("costhetaelExtra","cos #theta_{hel} Extra",wzero+"*("+cut+")", 10, -1, 1))
 #variabili_3j1t.append(variabile("costhetapolExtra","cos #theta_{pol} Extra",wzero+"*("+cut+")", 10, -1, 1))
@@ -692,10 +703,11 @@ variabili_3j1t.append(variabile("leadingextrajetpt","leadingextrajetp_{#mathrm{T
 variabili_3j1t.append(variabile("BDT_STsd_vs_TT_sr_3j1t","BDT STsd vs TT sr",wzero+"*("+cut+")", 50, -1, 1))
 variabili_3j1t.append(variabile("BDT_All_vs_QCDMu_mtw_3j1t","BDT All vs QCDMu",wzero+"*("+cut+")", 50, -1, 1))
 '''
-#variabili_3j1t.append(variabile("BDT_ST_vs_TT_mtweta_3j1t","Discriminator ST vs TT qcd-depl cr",wzero+"*("+cut+")", 15, -0.55, 0.45))
-#variabili_3j1t.append(variabile("BDT_ST_vs_VJ_mtweta_3j1t","Discriminator ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 15, -0.4, 0.4))
-#variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t","Discriminator STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 10, -0.4, 0.3))
-variabili_3j1t.append(variabile("BDT_STsd_vs_ST_sr_3j1t","Discriminator STsd+TTsd vs STb sr",wzero+"*("+cut+")", 10, -0.4, 0.2))
+#variabili_3j1t.append(variabile("BDT_ST_vs_TT_mtweta_3j1t","Discriminator ST vs TT qcd-depl cr",wzero+"*("+cut+")", 15, -0.4, 0.4))
+#variabili_3j1t.append(variabile("BDT_ST_vs_All_mtweta_3j1t","Discriminator ST vs TT+VJ qcd-depl cr",wzero+"*("+cut+")", 15, -0.5, 0.45))
+variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t","Discriminator STsd vs TT+VJ+ST sr",wzero+"*("+cut+")", 10, -0.5, 0.15))
+#variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t_2","Discriminator STsd vs TT+VJ+ST sr",wzero+"*("+cut+")", 10, -0.5, 0.2))
+#variabili_3j1t.append(variabile("BDT_STsd_vs_ST_sr_3j1t","Discriminator STsd vs STb sr",wzero+"*("+cut+")", 15, -0.5, 0.2))
 #variabili_3j1t.append(variabile("BDT_ST_vs_TT_mtweta_3j1t_E","Discriminator ST vs TT qcd-depl cr",wzero+"*("+cut+")", 15, -0.55, 0.45))
 #variabili_3j1t.append(variabile("BDT_ST_vs_VJ_mtweta_3j1t_E","Discriminator ST vs VJ qcd-depl cr",wzero+"*("+cut+")", 15, -0.4, 0.4))
 #variabili_3j1t.append(variabile("BDT_STsd_vs_All_sr_3j1t_E","Discriminator STsd+TTsd vs TTb+VJ sr",wzero+"*("+cut+")", 10, -0.4, 0.3))
@@ -703,29 +715,33 @@ variabili_3j1t.append(variabile("BDT_STsd_vs_ST_sr_3j1t","Discriminator STsd+TTs
 
 variabili_3j2t = [] 
 wzero = "w"
-#variabili_3j2t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 12, 0, 250))
-#variabili_3j2t.append(variabile("etajprime","|#eta_{j^{,}}|",wzero+"*("+cut+")", 10, 0, 4.7))
-#variabili_3j2t.append(variabile("MET","MET",wzero+"*("+cut+")", 50, 0, 600))
+'''
+variabili_3j2t.append(variabile("mtw","m_{T}^{W} [GeV/c^{2}]",wzero+"*("+cut+")", 12, 0, 250))
+variabili_3j2t.append(variabile("etajprime","|#eta_{j^{,}}|",wzero+"*("+cut+")", 10, 0, 4.7))
+variabili_3j2t.append(variabile("MET","MET",wzero+"*("+cut+")", 15, 0, 250))
+variabili_3j2t.append(variabile("nextrajets","no. extra jets",wzero+"*("+cut+")", 6, -0.5, 5.5))
+variabili_3j2t.append(variabile("deltaEtabb","#Delta#eta_{bb}",wzero+"*("+cut+")", 10, 0, 4.7))
+variabili_3j2t.append(variabile("mlbleading","lep+b-jet leading mass [GeV/c]^{2}",wzero+"*("+cut+")", 15, 0, 300))
+variabili_3j2t.append(variabile("mlbsecond","lep+b-jet second mass [GeV/c]^{2}",wzero+"*("+cut+")", 15, 0, 300))
+variabili_3j2t.append(variabile("mljprime","lep+j^{,} Mass",wzero+"*("+cut+")", 15, 0, 300))
+variabili_3j2t.append(variabile("topMassLeading","top mass leading [GeV/c]^{2}",wzero+"*("+cut+")", 15, 90, 400))
+variabili_3j2t.append(variabile("costhetaelLeading","cos #theta_{hel} leading",wzero+"*("+cut+")", 10, -1, 1))
+variabili_3j2t.append(variabile("costhetapolLeading","cos #theta_{pol} leading",wzero+"*("+cut+")", 10, -1, 1))
+variabili_3j2t.append(variabile("topMassSecond","top mass second [GeV/c]^{2}",wzero+"*("+cut+")", 15, 90, 400))
+variabili_3j2t.append(variabile("costhetaelSecond","cos #theta_{hel} leading",wzero+"*("+cut+")", 10, -1, 1))#
+variabili_3j2t.append(variabile("costhetapolSecond","cos #theta_{pol} second",wzero+"*("+cut+")", 10, -1, 1))
+'''
 #variabili_3j2t.append(variabile("mt2w","mt2w",wzero+"*("+cut+")", 50, 0, 600))
-#variabili_3j2t.append(variabile("deltaEtabb","#Delta#eta_{bb}",wzero+"*("+cut+")", 24, 0, 6))
-#variabili_3j2t.append(variabile("mlbleading","lep+b-jet leading mass [GeV/c]^{2}",wzero+"*("+cut+")", 35, 0, 500))
-#variabili_3j2t.append(variabile("mlbsecond","lep+b-jet second mass [GeV/c]^{2}",wzero+"*("+cut+")", 35, 0, 500))
-#variabili_3j2t.append(variabile("mljprime","lep+j^{,} Mass",wzero+"*("+cut+")", 100, 0, 800))
-#variabili_3j2t.append(variabile("topMassLeading","top mass leading [GeV/c]^{2}",wzero+"*("+cut+")", 15, 90, 400))
 #variabili_3j2t.append(variabile("topMtLeading","top Mt leading",wzero+"*("+cut+")", 50, 0, 600))
 #variabili_3j2t.append(variabile("topPtLeading","top pT leading [GeV/c]",wzero+"*("+cut+")", 40, 0, 600))
 #variabili_3j2t.append(variabile("topYLeading","top Y leading",wzero+"*("+cut+")", 80, -400, 400))
 #variabili_3j2t.append(variabile("topEtaLeading","#eta_{top} leading",wzero+"*("+cut+")", 48, -6, 6))
-#variabili_3j2t.append(variabile("costhetaelLeading","cos #theta_{hel} leading",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_3j2t.append(variabile("costhetapolLeading","cos #theta_{pol} leading",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_3j2t.append(variabile("topMassSecond","top mass second [GeV/c]^{2}",wzero+"*("+cut+")", 20, 0, 400))
 #variabili_3j2t.append(variabile("topMtSecond","top Mt second",wzero+"*("+cut+")", 50, 0, 600))
 #variabili_3j2t.append(variabile("topPtSecond","top pT second [GeV/c]",wzero+"*("+cut+")", 20, 0, 400))
 #variabili_3j2t.append(variabile("topYSecond","top Y second",wzero+"*("+cut+")", 80, -400, 400))
 #variabili_3j2t.append(variabile("topEtaSecond","#eta_{top} second",wzero+"*("+cut+")", 48, -6, 6))
-#variabili_3j2t.append(variabile("costhetaelSecond","cos #theta_{hel} leading",wzero+"*("+cut+")", 10, -1, 1))
-#variabili_3j2t.append(variabile("costhetapolSecond","cos #theta_{pol} second",wzero+"*("+cut+")", 10, -1, 1))
-variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t","Discriminator ST vs TT",wzero+"*("+cut+")", 15, -0.4, 0.4))
+variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t","Discriminator ST vs TT",wzero+"*("+cut+")", 10, -0.4, 0.4))
+#variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t_2","Discriminator ST vs TT",wzero+"*("+cut+")", 10, -0.4, 0.4))
 #variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t_E","Discriminator ST vs TT",wzero+"*("+cut+")", 20, -0.4, 0.4))
 
 
@@ -773,36 +789,36 @@ else:
 
 
 trainings_2j1t = []
-trainings_2j1t.append("ST_vs_TT_mtweta")
-trainings_2j1t.append("ST_vs_VJ_mtweta")
-trainings_2j1t.append("STsd_vs_All_sr")
-trainings_2j1t.append("STsd_vs_ST_sr")
+#trainings_2j1t.append("ST_vs_All")
+trainings_2j1t.append("ST_vs_All_2")
 
 trainings_3j1t = []
-trainings_3j1t.append("ST_vs_TT_mtweta_3j1t")
-trainings_3j1t.append("ST_vs_VJ_mtweta_3j1t")
+#trainings_3j1t.append("ST_vs_All_mtweta_3j1t")
+#trainings_3j1t.append("STsd_vs_All_sr_3j1t")
+#trainings_3j1t.append("STsd_vs_ST_sr_3j1t")
 trainings_3j1t.append("STsd_vs_All_sr_3j1t")
-trainings_3j1t.append("STsd_vs_ST_sr_3j1t")
+#trainings_3j1t.append("STsd_vs_All_sr_3j1t_2")
 
 trainings_3j2t = []
-trainings_3j2t.append("ST_vs_TT_3j2t")
+#trainings_3j2t.append("ST_vs_TT_3j2t")
+trainings_3j2t.append("ST_vs_TT_3j2t_2")
 
 trainings_2j1t_E = []
-trainings_2j1t_E.append("ST_vs_TT_mtweta")
-trainings_2j1t_E.append("ST_vs_VJ_mtweta")
-trainings_2j1t_E.append("STsd_vs_All_sr")
-trainings_2j1t_E.append("STsd_vs_ST_sr")
+#trainings_2j1t_E.append("ST_vs_All")
+trainings_2j1t_E.append("ST_vs_All_2")
 
 trainings_3j1t_E = []
-trainings_3j1t_E.append("ST_vs_TT_mtweta_3j1t")
-trainings_3j1t_E.append("ST_vs_VJ_mtweta_3j1t")
+#trainings_3j1t_E.append("ST_vs_All_mtweta_3j1t")
+#trainings_3j1t_E.append("STsd_vs_All_sr_3j1t")
+#trainings_3j1t_E.append("STsd_vs_ST_sr_3j1t")
 trainings_3j1t_E.append("STsd_vs_All_sr_3j1t")
-trainings_3j1t_E.append("STsd_vs_ST_sr_3j1t")
+#trainings_3j1t_E.append("STsd_vs_All_sr_3j1t_2")
 
 trainings_3j2t_E = []
-trainings_3j2t_E.append("ST_vs_TT_3j2t")
+#trainings_3j2t_E.append("ST_vs_TT_3j2t")
+trainings_3j2t_E.append("ST_vs_TT_3j2t_2")
 
-lumi=35.89
+lumi = 35.9
 
 print "trees lumi option is ", opt.lumi
 if opt.lumi:

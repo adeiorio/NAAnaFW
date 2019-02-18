@@ -8,9 +8,11 @@ import ROOT as rt
 #
 
 cmsText     = "CMS";
+#cmsText     = "an LHC";
 cmsTextFont   = 61  
 
 writeExtraText = True
+#extraText   = "Experiment"
 extraText   = "Preliminary"
 extraTextFont = 52 
 
@@ -33,9 +35,9 @@ lumi_8TeV  = "19.7 fb^{-1}"
 lumi_7TeV  = "5.1 fb^{-1}"
 lumi_sqrtS = ""
 
-drawLogo      = False
+drawLogo   = False
 
-def CMS_lumi(pad,  lumi_sqrtS,  iPosX ):
+def CMS_lumi(pad,  lumi_sqrtS,  iPosX , lepText):
     outOfFrame    = False
     if(iPosX/10==0 ): outOfFrame = True
 
@@ -126,7 +128,7 @@ def CMS_lumi(pad,  lumi_sqrtS,  iPosX ):
 
     posY_ = 1-t - relPosY*(1-t-b)
 
-    print lumiText," 2 "
+#    print lumiText," 2 "
 
     if( not outOfFrame ):
         if( drawLogo ):
@@ -153,6 +155,11 @@ def CMS_lumi(pad,  lumi_sqrtS,  iPosX ):
                 latex.SetTextAlign(align_)
                 latex.SetTextSize(extraTextSize*t)
                 latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
+                #aggiunta per la stampa di lepText all'interno della Canvas
+                latex.SetTextFont(42)
+#                latex.SetTextAlign(31)
+                latex.SetTextSize(lumiTextSize*t)
+                latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t - relExtraDY*extraTextSize*t , lepText)      
     elif( writeExtraText ):
         if( iPosX==0):
             posX_ =   l +  relPosX*(1-l-r)
@@ -163,6 +170,6 @@ def CMS_lumi(pad,  lumi_sqrtS,  iPosX ):
         latex.SetTextAlign(align_)
         latex.DrawLatex(posX_, posY_, extraText)      
 
-    print lumiText," 3 "
+#    print lumiText," 3 "
     pad.Update()
-    print lumiText," 4 "
+#    print lumiText," 4 "

@@ -4,6 +4,7 @@ def split(macro, channel, lep, ph):
      os.system("root -l -b -q \'"+str(macro)+"(\""+str(channel)+"\",\""+str(lep)+"\",\""+str(ph)+"\")\'")
 
 lepton = ["muon"] #,"electron"
+#channel = ["ST_tch"]
 channel = ["ST_tch","ST_tch_p_sd","ST_tch_sd","TT"]
 phase = ["train","test"]
 
