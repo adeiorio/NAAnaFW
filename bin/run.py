@@ -11,17 +11,19 @@ from os.path import exists,join,realpath
 # Runners
 class RunnerBase(object):
 
-    def __init__(self, queue, jid, outpath, errpath, script ):
+    def __init__(self, queue, jid, outpath, errpath, script, sub ):
         
         self._queue = queue
         self._jid = jid
         self._outpath = outpath
         self._errpath = errpath
         self._scriptpath = script
+        self._subpath = sub
 
     def run(self, go=True):
         cmd = self.getCmd();
         print cmd
+        print 'sto qua e=================================== %s ', cmd.split()
         # lauch it on qsub
         if go:
             subprocess.call(cmd.split())
@@ -75,15 +77,34 @@ class BRunner(RunnerBase):
             ])
 
         return bcmd
+
+# Bsub runner
+class CRunner(RunnerBase):
+
+    def __init__(self, *args, **kwargs):
+        super(CRunner, self).__init__(*args, **kwargs)
+
+    def getCmd(self):
+        print self._subpath
+        # Build qsum command
+        ccmd = ' '.join([
+            # Csub...
+            'condor_submit ',
+            self._subpath
+            ])
+
+        return ccmd
+
 # Writers
 #
 class ScriptWriterBase(object):
 
-    def __init__(self, qdir, cwd, cmd, jid):
+    def __init__(self, qdir, cwd, cmd, jid,cmddel):
         self._qdir = qdir
         self._cwd  = cwd 
         self._cmd = cmd
         self._jid = jid
+        self._cmddel = cmddel
 
     @property
     def stdout(self):
@@ -93,17 +114,33 @@ class ScriptWriterBase(object):
     def stderr(self):
         return join(self._qdir,'stderr.txt')
 
-    def writeRunScript(self):
+    def writeSubScript(self):
+        template = self.getSubTemplate();
+        with open(self.subsh,'w') as subfile:
+            subfile.write(template.format(qdir = self._qdir, cwd = self._cwd, cmd = self._cmd, jid = self._jid))
+
+        # Set correct flags
+        os.chmod(self.subsh,
+            stat.S_IWUSR | stat.S_IRUSR | stat.S_IXUSR |
+            stat.S_IRGRP | stat.S_IXGRP |
+            stat.S_IROTH | stat.S_IXOTH )
+        
+    def writeRunScript(self,readonly=False):
         template = self.getRunTemplate();
         # print script.format(qdir = qdir, cwd = cwd, cmd=cmd, jid=args.jid)
-        with open(self.runsh,'w') as runfile:
-            runfile.write(template.format(qdir = self._qdir, cwd = self._cwd, cmd = self._cmd, jid = self._jid))
+        if readonly:
+            runfile = open(self.runsh,'w')
+        else:
+            with open(self.runsh,'w') as runfile:
+                runfile.write(template.format(qdir = self._qdir, cwd = self._cwd, cmd = self._cmd, jid = self._jid, cmddel=self._cmddel))
 
         # Set correct flags
         os.chmod(self.runsh,
             stat.S_IWUSR | stat.S_IRUSR | stat.S_IXUSR |
             stat.S_IRGRP | stat.S_IXGRP |
             stat.S_IROTH | stat.S_IXOTH )
+
+    
 #  Bash script writer
 class BashScriptWriter(ScriptWriterBase):
 
@@ -113,6 +150,10 @@ class BashScriptWriter(ScriptWriterBase):
     @property
     def runsh(self):
         return join(self._qdir,'run.sh')
+
+    @property
+    def subsh(self):
+        return join(self._qdir,'sub.sub')
 
     def writeEnv(self):
         # Dump current environment
@@ -135,13 +176,33 @@ cd {cwd}
 CMD="{cmd}"
 echo $CMD
 {cmd}
+wait 
+wait
 res=$?
 echo =========================================================
 echo Exit code: $res
 echo =========================================================
 echo Done on `date` \| $res -  {jid} [started: $START_TIME ]>> qexe.log
+CMDDEL = "{cmddel}"
+echo $CMDDEL
+{cmddel}
 '''
         return script
+
+
+    def getSubTemplate(self):
+        script='''universe   = vanilla
+executable = {qdir}/run.sh
+arguments  = "training 2019"
+
+output     = {qdir}/out.txt
+error      = {qdir}/err.txt
+log        = {qdir}/log.txt
+
++MaxRuntime = 86400
+queue '''
+        return script
+
 
 # TCSH script writer
 class TcshScriptWriter(ScriptWriterBase):
@@ -152,6 +213,10 @@ class TcshScriptWriter(ScriptWriterBase):
     @property
     def runsh(self):
         return join(self._qdir,'run.csh')
+
+    @property
+    def subssh(self):
+        return join(self._qdir,'sub.sub')
 
     def writeEnv(self):
         # Dump current environment
@@ -173,30 +238,50 @@ cd {cwd}
 set CMD="{cmd}"
 echo $CMD
 {cmd}
+wait ${!}
 set res=$?
 echo =========================================================
 echo Exit code: $res
 echo =========================================================
 echo Done on `date` - $res -  {jid} [started: $START_TIME ]>> qexe.log
+CMDDEL = "{cmddel}"
+echo $CMDDEL
+{cmddel}
 '''
 
+        return script
+
+    def getSubTemplate(self):
+        script='''universe   = vanilla
+executable = {qdir}/run.sh
+arguments  = "training 2019"
+
+output     = {qdir}/out.txt
+error      = {qdir}/err.txt
+log        = {qdir}/log.txt
+
++MaxRuntime = 86400
+queue '''
         return script
 
 
 runnerMap = {
     'qsub': QRunner,
     'bsub': BRunner,
+    'condor': CRunner,
 }
 
 
 # usage = 'usage: %prog'
 parser = argparse.ArgumentParser()
 parser.add_argument('jid',help='Job ID', default=None)
+parser.add_argument('-R','--readonly',dest='readonly', default=False, help='Overwrite .runsh?')
 parser.add_argument('-w','--workdir',dest='workdir', default=None, help='Work directory')
 parser.add_argument('-q','--queue',dest='queue',help='Queue', default='short.q')
 parser.add_argument('-n','--dryrun',dest='dryrun' , help='Dryrun', default=False, action='store_true')
-parser.add_argument('-e','--engine',dest='engine' , choices=['qsub','bsub'], help='Engine', default='qsub')
+parser.add_argument('-e','--engine',dest='engine' , choices=['qsub','bsub','condor'], help='Engine', default='qsub')
 parser.add_argument('cmd', metavar='cmd', nargs='+',help='Commands')
+parser.add_argument('cmddel', metavar='cmddel', nargs='+',help='Commands to delete res')
 # Let's go
 args = parser.parse_args()
 if args.jid is None:
@@ -205,6 +290,9 @@ if args.jid is None:
 # cmd = ' '.join(args)
 cmd = ' '.join(args.cmd)
 print 'Preparing the execution of \''+cmd+'\' on the batch system'
+cmddel = ' '.join(args.cmddel)
+
+
 
 cwd = os.getcwd()
 
@@ -221,17 +309,20 @@ if exists(qdir):
 # And remake the directory
 os.makedirs(qdir)
 
-writer = BashScriptWriter(qdir, cwd, cmd, args.jid);
+writer = BashScriptWriter(qdir, cwd, cmd, args.jid,cmddel);
 # writer = TcshScriptWriter(qdir, cwd, cmd, args.jid);
 
 # Dump current environment
 writer.writeEnv()
 
 # Write run script
-writer.writeRunScript()
+writer.writeRunScript(args.readonly)
+writer.writeSubScript()
+
 
 # Create a runner object
-runner = runnerMap[args.engine](args.queue, args.jid, writer.stdout, writer.stderr, writer.runsh)
+runner = runnerMap[args.engine](args.queue, args.jid, writer.stdout, writer.stderr, writer.runsh, writer.subsh)
+
 
 # And Go!
 runner.run( not args.dryrun )

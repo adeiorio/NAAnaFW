@@ -1,4 +1,6 @@
 <use  name="PhysicsTools/Utilities"/>
+<use  name="CondFormats/BTauObjects"/>
+<use  name="CondTools/BTau"/>
 <use  name="DataFormats/Math"/>
 <use  name="rootgraphics"/>
 <use  name="rootphysics"/>
@@ -14,5 +16,6 @@
 <flags cxxflags="-g -ggdb -O0" />
 <environment>
   <bin  file="SingleTopAnalysis.cpp" name="SingleTopAnalysis"></bin>
+  <bin  file="SingleTopAnalysis_dev.cpp" name="SingleTopAnalysis_dev"></bin>
 </environment>
 <flags  EDM_PLUGIN="1"/>
