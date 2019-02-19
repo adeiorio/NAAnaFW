@@ -96,6 +96,8 @@ int main(int argc, char **argv) {
     std::cout << "Info: Loading file collection from " << path << std::endl;
     TFileCollection fc(sample.c_str(),sample.c_str(),path.c_str());
     std::cout << "Info: Files found : " << fc.GetNFiles() << std::endl;
+
+    bool dores=false;
     
     bool useCMVATSelection = true;
     bool useCSVTSelection = false;
@@ -502,7 +504,7 @@ int main(int argc, char **argv) {
 
 
     
-    systZero.createFilesSysts(allMyFiles,outputpath+"/res/"+sample + "_" +channel);
+    if (dores){systZero.createFilesSysts(allMyFiles,outputpath+"/res/"+sample + "_" +channel);}
     
     //systZero.createFilesSysts(allMyFiles,"./res/"+sample + "_" +channel);
     //addWZNLO=false, 
@@ -1941,7 +1943,7 @@ int main(int argc, char **argv) {
         }
   
     for(Int_t evt=0; evt<nEvents; evt++ ){
-    //    for(Int_t evt=0; evt<5000; evt++ ){
+      //    for(Int_t evt=0; evt<5000; evt++ ){
         if(evt%10000==1 ){
 	  time_t ctt = time(0);
 	  cout<<"Info: Running on event: "<<evt<< " time "<< asctime(localtime(&ctt))<<endl; 
@@ -3683,6 +3685,7 @@ int main(int argc, char **argv) {
   systZero.addHistograms(h_2j1t_mtwcut_sr_leadingextrajetcsv,h_2j1t_mtwcut_sr_leadingextrajetcsv_sd_b);
 
   //Write the Histogramms here  
+  if(dores){
   systZero.writeSingleHistogramSysts(h_cutFlow, allMyFiles); 
   systZero.writeSingleHistogramSysts(h_weight_sign, allMyFiles); 
   systZero.writeHistogramsSysts(h_nPV, allMyFiles); 
@@ -3875,15 +3878,22 @@ int main(int argc, char **argv) {
   systZero.writeHistogramsSysts(h_nJets_1b, allMyFiles);
   systZero.writeHistogramsSysts(h_nJets_2b, allMyFiles);
   systZero.writeHistogramsSysts(h_nbJets, allMyFiles);
-  
+  }
   //  cout << "bef trees "<<endl;
   if(addTrees){
+    outTreeFile->cd();
+    h_cutFlow->Write();
     syst1BM.writeTreesSysts(trees1T,outTreeFile);
     syst2BM.writeTreesSysts(trees2T,outTreeFile);
+    outTreeFile->Close();
   }
   
   //  cout << "after trees "<<endl;
-  systZero.closeFilesSysts(allMyFiles);
+  if(dores){
+    systZero.closeFilesSysts(allMyFiles);
+  }/*else{
+    delete allMyFiles;
+    }*/
   
   std::cout<< "Info: Total No. of events for sample["<<sample<<"] : "<<nEvents<<std::endl;
     }
