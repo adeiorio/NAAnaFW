@@ -48,6 +48,14 @@ def formSamples(proclist):
         if proc=="VV" or isAllProcesses:
             from samplesVV import samples as stemp
             samp.extend(stemp)
+        if proc=="SingleMuon" or isAllProcesses:
+            from samplesSingleMuon import samples as stemp
+            samp.extend(stemp)
+        if proc=="SingleElectron" or isAllProcesses:
+            from samplesSingleElectron import samples as stemp
+            samp.extend(stemp)
+        if proc.startswith("_"):
+            samp.append(proc[1:])
         '''
         if proc=="QCDMu" or isAllProcesses:
             from samplesQCDMu import samples as stemp
@@ -55,11 +63,6 @@ def formSamples(proclist):
         if proc=="QCDEle" or isAllProcesses:
             from samplesQCDEle import samples as stemp
             samp.extend(stemp)
-        if proc=="SingleMuon" or isAllProcesses:
-            from samplesSingleMuon import samples as stemp
-            samp.extend(stemp)
-        if proc.startswith("_"):
-            samp.append(proc[1:])
         '''    
     return samp
 

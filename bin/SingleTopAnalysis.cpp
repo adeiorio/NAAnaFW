@@ -2246,7 +2246,7 @@ int main(int argc, char **argv) {
 	maxJetLoop = min(15, jetSize);
 	maxJet20Loop = min(15, jet20Size);
       }
-
+      
       bWeightReshape=1.0;
       //b
       bWeightReshapeJESUp=1.0; bWeightReshapeJESDown=1.0; bWeightReshapeHFStats1Up=1.0; bWeightReshapeHFStats1Down=1.0; bWeightReshapeHFStats2Up=1.0; bWeightReshapeHFStats2Down=1.0;    
@@ -2311,6 +2311,8 @@ int main(int argc, char **argv) {
       syst2BM.setWeight("puDown",bWeight2CSVM*puDownFact);
       syst2BM.setWeight("lepUp",bWeight2CSVM*sf_lepUp);
       syst2BM.setWeight("lepDown",bWeight2CSVM*sf_lepDown);
+
+      //     cout << "scenario " << scenario<< " weight w "<< w << " weight 1 btag " << " bweight1csvm "<<endl; 
       
       if(addPDF){
 	syst0BM.setPDFWeights(w_pdfs,nPDF,w_zero,sigma_pdfs,true);
@@ -2739,7 +2741,7 @@ int main(int argc, char **argv) {
       }
       standardjets.push_back(b);
     }//End of jet loop
-    
+    //    cout << "after jet loop, scenario " << scenario<< " weight w "<< w << " weight reshape " << bWeightReshape << endl;     
     nJets = jets.size();
     nCSVJets=bjets.size();
     //  cout <<"passes trig "<<endl; 
@@ -2747,9 +2749,9 @@ int main(int argc, char **argv) {
     std::sort(extrajets.begin(), extrajets.end(), by_pt_jet()); 
     bool passmuon = muonTrigger && nMu == 1 ;
     bool passelectron = electronTrigger && nEl == 1 ;
-
-    w*=bWeightReshape;
-
+    
+    if(scenario=="nominal")w*=bWeightReshape;
+    
     bool passlepton = ((passmuon && ((channel=="muon" || channel=="muonantiiso"))) || ((passelectron && ((channel=="electron" || channel=="electronantiiso" )))) );
     if(passlepton){
       n_lepton+=w;
@@ -3121,6 +3123,8 @@ int main(int argc, char **argv) {
       syst1BM.setkFact("cmvalfstats2",1,1,1);
       syst1BM.setkFact("cmvahf",1,1,1);
 
+      //      cout << "2j1t before cmvas, " << scenario<< " weight w "<< w << endl;
+
       if(doOnlyBTagReshaping){
 
 	syst1BM.setkFact("cmvajes",bWeightReshape,bWeightReshapeJESUp,bWeightReshapeJESDown);
@@ -3136,7 +3140,7 @@ int main(int argc, char **argv) {
 	syst1BM.setkFact("cmvahf",bWeightReshape,bWeightReshapeHFUp,bWeightReshapeHFDown);
 	
       }
-
+      //      cout << "2j1t after cmvas, " << scenario<< " weight w "<< w << endl;
       //      syst1BM.setkFact("cmvahfsum",1,1,1);
       //syst1BM.setkFact("cmvalfsum",1,1,1);
       

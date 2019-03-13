@@ -90,6 +90,7 @@ if not exists(fileListDir):
 
 # Create test/ directory if it doesn't exist
 if not exists('test'):
+
     os.makedirs('test')
 
 filePath= opt.filepath
@@ -218,7 +219,8 @@ for s in samples:
             cmd = cmd + 'SingleTopAnalysis '+ s + ' ' + sampleFileList  + ' ' + c + ' ' + opt.cat + ' ' + opt.sys + ' ' + opt.sync + ' ' + isData + ' ' + opt.treesDir + ' ' + opt.mva + ' ' + opt.outputpath + " & \n "
     print "cmd is: ",cmd
 
-    cmddel = " rm " + opt.outputpath + "/res/"+s+"_"+opt.channel+"_*.root" 
+#    cmddel = " rm " + opt.outputpath + "/res/"+s+"_"+opt.channel+"_*.root" 
+    cmddel = ""
     print "cmd del is: ", cmddel
 #    if opt.mode=="tmpcp":
 #        import time

@@ -45,6 +45,8 @@ void macro_lumi(TString channel, double lumi, double sigma, TString lep)
   h1_uncut =(TH1F*)f1_uncut->Get("h_cutFlow");
   Float_t n_uncut = h1_uncut->GetBinContent(0);
   TFile * f1 = TFile::Open("trees/"+lep+"/trees_"+channel+"_"+lep+".root");
+  //  h1_uncut =(TH1F*)f1->Get("h_cutFlow");
+  //  Float_t n_uncut = h1_uncut->GetBinContent(0);
 
   TTree * t1 = (TTree*)f1->Get("events_2j1t");
   TTree * t2 = (TTree*)f1->Get("events_2j1t_jesUp");

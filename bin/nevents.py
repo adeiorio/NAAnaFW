@@ -23,8 +23,10 @@ gStyle.SetOptStat(0)
 gROOT.SetBatch()        # don't pop up canvases
 
 leptons = {
-     "muon":["h1D_2j1t_cr","h1D_2j1t_sr","h1D_3j1t_cr","h1D_3j1t_sr","h_3j2t_BDT_ST_vs_TT_3j2t"],
-     "electron":["h1D_2j1t_cr","h1D_2j1t_sr","h1D_3j1t_cr","h1D_3j1t_sr","h_3j2t_BDT_ST_vs_TT_3j2t"]
+     "muon":["h_2j1t_BDT_ST_vs_All_mtw_G_50","h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5","h_3j2t_BDT_ST_vs_TT_3j2t"],
+     "electron":["h_2j1t_BDT_ST_vs_All_mtw_G_50","h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5","h_3j2t_BDT_ST_vs_TT_3j2t"],
+#     "muon":["h_2j1t_BDT_ST_vs_All_mtw_G_50","h_3j1t_BDT_STsd_vs_All_sr_3j1t_2_mtw_G_50_AND_etajprime_G_2p5","h_3j2t_BDT_ST_vs_TT_3j2t"],
+#     "electron":["h_2j1t_BDT_ST_vs_All_mtw_G_50","h_3j1t_BDT_STsd_vs_All_sr_3j1t_2_mtw_G_50_AND_etajprime_G_2p5","h_3j2t_BDT_ST_vs_TT_3j2t"],
 #     "muon":["h_2j1t_topMass_mtw_G_50_AND_etajprime_L_2p5","h_2j1t_topMass_mtw_G_50_AND_etajprime_G_2p5","h_3j1t_topMass_mtw_G_50_AND_etajprime_L_2p5","h_3j1t_topMass_mtw_G_50_AND_etajprime_G_2p5","h_3j2t_topMassLeading"],
 #     "electron":["h_2j1t_topMass_mtw_G_50_AND_etajprime_L_2p5","h_2j1t_topMass_mtw_G_50_AND_etajprime_G_2p5","h_3j1t_topMass_mtw_G_50_AND_etajprime_L_2p5","h_3j1t_topMass_mtw_G_50_AND_etajprime_G_2p5","h_3j2t_topMassLeading"]
 #     "muon":["h_2j1t_BDT_ST_vs_VJ_mtweta_mtw_G_50_AND_etajprime_L_2p5", "h_2j1t_BDT_STsd_vs_ST_sr_mtw_G_50_AND_etajprime_G_2p5", "h_3j1t_BDT_ST_vs_VJ_mtweta_3j1t_mtw_G_50_AND_etajprime_L_2p5", "h_3j1t_BDT_STsd_vs_ST_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5", "h_3j2t_BDT_ST_vs_TT_3j2t"],
@@ -43,7 +45,7 @@ samples = {
      "ST_sch":"\\sch",
      "ST_tW":"tW assoc.prod.",
      "DDQCD":"QCD",
-     "ST_tch_p_sd":"$t$-channel$_{\\text{sd}}$ production",
+#     "ST_tch_p_sd":"$t$-channel$_{\\text{sd}}$ production",
      "ST_tch_sd":"$t$-channel$_{\\text{sd}}$ decay",
      "ST_tch":"\\tch"
      }
@@ -62,30 +64,22 @@ def getSignificance(_list):
 #          print el, total 
      return sign
 
-tex =  False #True #
-signif =  True #False #
+tex = True # False #
+signif = False # True #
 e = 0
 for lep in leptons.keys():
      p=""
      for hist in leptons[lep]:
 #          '''
-          if lep == "muon" and hist == "h1D_2j1t_cr": 
-               region = "muon_2j1t_central"
-          elif lep == "muon" and hist == "h1D_2j1t_sr": 
-               region = "muon_2j1t_forward"
-          elif lep == "muon" and hist == "h1D_3j1t_cr": 
-               region = "muon_3j1t_central"
-          elif lep == "muon" and hist == "h1D_3j1t_sr": 
+          if lep == "muon" and hist == "h_2j1t_BDT_ST_vs_All_mtw_G_50": 
+               region = "muon_2j1t"
+          elif lep == "muon" and hist == "h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5": 
                region = "muon_3j1t_forward"
           elif lep == "muon" and hist == "h_3j2t_BDT_ST_vs_TT_3j2t":
                region = "muon_3j2t"
-          elif lep == "electron" and hist == "h1D_2j1t_cr": 
-               region = "electron_2j1t_central"
-          elif lep == "electron" and hist == "h1D_2j1t_sr": 
-               region = "electron_2j1t_forward"
-          elif lep == "electron" and hist == "h1D_3j1t_cr": 
-               region = "electron_3j1t_central"
-          elif lep == "electron" and hist == "h1D_3j1t_sr": 
+          elif lep == "electron" and hist == "h_2j1t_BDT_ST_vs_All_mtw_G_50": 
+               region = "electron_2j1t"
+          elif lep == "electron" and hist == "h_3j1t_BDT_STsd_vs_All_sr_3j1t_mtw_G_50_AND_etajprime_G_2p5": 
                region = "electron_3j1t_forward"
           elif lep == "electron" and hist == "h_3j2t_BDT_ST_vs_TT_3j2t":
                region = "electron_3j2t"
@@ -146,16 +140,15 @@ for lep in leptons.keys():
                               st_bin = tmp.GetBinContent(i)
 #                    print "Relative uncertainty %-20s %-8s, bin %-2i" %(hist, lep, i)
                     b = 100*st_bin/total_bin
-                    if(b>20): 
+                    if(b>100): 
                          p += " mcstat_"+region+"_ST_tch_bin"+str(i)
                     for s, el in zip(samples.keys(), errors_bin):
                          sign = 100*el/total_bin
-                         if(sign>4): # and s!="DDQCD" and s!="ST_sch" and s!="VV" and s=="WJets"
+                         if(sign>2 and s!="ST_tch_sd"): # and s!="DDQCD" and s!="ST_sch" and s!="VV" and s=="WJets"
                               e+=1
-#                              print "%-10s %-0.2f " %(s, sign)
+#                              print "%-10s %-4.2f %8s %2i %-0.2f " %(s, el, region, i, sign)
                               p += " mcstat_"+region+"_"+s+"_bin"+str(i)
 #               print e
-          '''
           if(tex):
                print "**********************************************"
                print "\\begin{table}[]"
@@ -166,28 +159,29 @@ for lep in leptons.keys():
                print "\\hline"
                for s, sname in samples.iteritems():
                     error = Double(0)
-                    infile = TFile.Open(pathin+"/"+lep+"/"+s+"_"+lep+".root")
+                    infile = TFile.Open(pathin+"/"+s+"_"+lep+".root")
                     tmp = (TH1F)(infile.Get(hist))
                     integrals.append(tmp.IntegralAndError(1,tmp.GetNbinsX()+1, error))
                     errors.append(error)
                     if(tex):
-                    print "%-10s  & %-6i $\pm$  %-3i \\\\ " %(sname,integrals[-1],errors[-1])
-               tmp.Reset("ICES")
+                         print "%-10s  & %-6i $\pm$  %-3i \\\\ " %(sname,integrals[-1],errors[-1])
+                    tmp.Reset("ICES")
           if(tex):
                print "\\hline"
                print "Total MC  & %-6i $\pm$  %-3i \\\\ " %(sum(integrals),getSumError(errors))
                print "\\hline"
-          integrals = []
-          errors = []
-          filedata=TFile.Open(pathin+"/"+lep+"/Data_"+lep+".root")
-          tmp = (TH1F)(filedata.Get(hist))
-          integral = tmp.Integral()
-          error = tmp.Integral()**0.5
+               integrals = []
+               errors = []
+               filedata=TFile.Open(pathin+"/Data_"+lep+".root")
+               tmp = (TH1F)(filedata.Get(hist))
+               integral = tmp.Integral()
+               error = tmp.Integral()**0.5
           if(tex):
                print "Data  & %-6i $\pm$  %-3i \\\\ " %(integral,error)
                print "\\end{tabular}"
                print "\\end{center}"
                print "\\end{table}"
-               '''
+
      if(signif):
           print p
+

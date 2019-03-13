@@ -14,3 +14,5 @@ for lep in lepton:
          print "mv trees_lumi/"+lep+"/trees_"+ch+"_"+lep+".root trees_lumi/trees_"+ch+"_"+lep+".root"
          for ph in phase:
               split("trees_splitter.C", ch, lep, ph)
+
+os.system("cp trees_lumi/muon/trees_WJets_muon.root trees_lumi/train/trees_WJets_muon_train.root")

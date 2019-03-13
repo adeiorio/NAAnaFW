@@ -51,7 +51,15 @@ def plot(channel, variable, njmt, syst, cut_tag, lep):
           if(syst==""):
                taglio = variable._taglio+"*w_nominal"
                foutput = "Plot/"+lep+"/"+channel+"_"+lep+".root"
-          elif(syst.startswith("jes") or syst.startswith("jer")):
+          elif(syst.startswith("jesUp")):
+               taglio = variable._taglio+"*cmvajesUp"
+               treename = "events_"+njmt+"_"+syst
+               foutput = "Plot/"+lep+"/"+channel+"_"+lep+"_"+syst+".root"
+          elif(syst.startswith("jesDown")):
+               taglio = variable._taglio+"*cmvajesDown"
+               treename = "events_"+njmt+"_"+syst
+               foutput = "Plot/"+lep+"/"+channel+"_"+lep+"_"+syst+".root"
+          elif(syst.startswith("jer")):
                taglio = variable._taglio+"*w_nominal"
                treename = "events_"+njmt+"_"+syst
                foutput = "Plot/"+lep+"/"+channel+"_"+lep+"_"+syst+".root"
@@ -797,7 +805,8 @@ variabili_3j2t.append(variabile("BDT_ST_vs_TT_3j2t_2","Discriminator ST vs TT",w
 
 systematics = []
 if opt.syst!="all" and opt.syst!="noSyst":
-    systematics.append((opt.syst).split(","))
+     for syst in (opt.syst).split(","):
+          systematics.append(syst)
 elif opt.syst!="all" and opt.syst=="noSyst":
     systematics.append("") #di default per syst="" alla variabile si applica il peso standard incluso nella macro macro_plot.C
 else:
@@ -834,8 +843,6 @@ else:
     systematics.append("cmvalfstats1Down")
     systematics.append("cmvalfstats2Up")
     systematics.append("cmvalfstats2Down")
-    systematics.append("cmvajesUp")
-    systematics.append("cmvajesDown")
 
 topologies = []
 if opt.topol!="all":
