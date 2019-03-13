@@ -308,7 +308,7 @@ for p in process.DMTreesDumper.physicsObjects:
         p.variablesF.append(cms.InputTag("electrons","elvidTight"))
             #print "yes"
         p.toSave.append("elvidVeto")
-        p.toSave.append( "elvidLoose")
+        p.toSave.append("elvidLoose")
         p.toSave.append("elvidMedium")
         p.toSave.append("elvidTight")
             

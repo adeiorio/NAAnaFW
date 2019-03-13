@@ -49,12 +49,13 @@ def findRootFileInPath(ls_command,srm, initialPath,sampleToFind,extraString="",d
         if l == initialPath:
 #            print " can't search further! "
             continue
+        
 #       print "list element is: "+ l
 #        print "sampleToFind is: "+ sampleToFind
 #       print l
 #       print date
 #       print extraString 
-        if (sampleToFind in l and not "failed" in l and not veto in l and (((extraString == "") or (extraString in l))) and (((date == "") or (("/"+date) in l))) ): 
+        if (sampleToFind in l and not "failed" in l and not veto in l and not "/log/" in l and (((extraString == "") or (extraString in l))) and (((date == "") or (("/"+date) in l))) ): 
 #            print date
 #            print extraString 
 #            print " there's  sample in this element! "
@@ -67,9 +68,10 @@ def findRootFileInPath(ls_command,srm, initialPath,sampleToFind,extraString="",d
             else:
                 fetchlist.append(l)
         else:
-            if ".root" in l:
-                continue
-            else: fetchlist.append(l)
+            if not "failed" in l and not "/log/" in l and not veto in l:
+                if ".root" in l:
+                    continue
+                else: fetchlist.append(l)
 
     if(len(outlist)==0):
         for l in fetchlist:
@@ -255,6 +257,8 @@ for sample in samplesAndPaths:
         print outputListJES
 
     if not opt.dryrun:
-        printFilesInList(outputListJES, "/pnfs/lcg.cscs.ch/cms/trivcat/", sample,outDir,"w",format=Format, verbose=opt.verbose>1)
-        printFilesInList(outputListJES, "/pnfs/lcg.cscs.ch/cms/trivcat/", sample,outDir,"a",format=Format, verbose=opt.verbose>1)
+#        printFilesInList(outputListJES, "/pnfs/lcg.cscs.ch/cms/trivcat/", sample,outDir,"w",format=Format, verbose=opt.verbose>1)
+#        printFilesInList(outputListJES, "/pnfs/lcg.cscs.ch/cms/trivcat/", sample,outDir,"a",format=Format, verbose=opt.verbose>1)
+        printFilesInList(outputListJES, "/cms/", sample,outDir,"w",format=Format, verbose=opt.verbose>1)
+        printFilesInList(outputListJES, "/cms/", sample,outDir,"a",format=Format, verbose=opt.verbose>1)
     
