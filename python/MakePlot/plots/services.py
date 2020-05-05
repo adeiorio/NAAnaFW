@@ -39,7 +39,7 @@ class Histo(object):
     _xTitleOffset = 0.9
     _yTitleOffset = 1.15
     
-    _lineWidth = 2
+    _lineWidth = 1
 
     def __init__(self, name="", title="", nBins=100, xmin=0, xmax=100):
         self._name = name
@@ -87,7 +87,8 @@ class Histo(object):
             self._h.SetFillStyle(fill)
         self._h.GetXaxis().SetTitle(self._title)
         nEvts = (self._h.GetXaxis().GetXmax() - self._h.GetXaxis().GetXmin()) / self._h.GetNbinsX()
-        self._h.GetYaxis().SetTitle("Events /"+ str.format("{0:.0f} GeV", nEvts));
+        ytitle = "Events/%.2f units" %nEvts
+        self._h.GetYaxis().SetTitle(ytitle)
 
     def SetStyleUnit(self, color, style = 0, fill = 0):
         self._h.GetXaxis().SetLabelFont(self._labelFont);
@@ -106,7 +107,8 @@ class Histo(object):
         self._h.SetFillStyle(fill)
         self._h.GetXaxis().SetTitle(self._title)
         nEvts = (self._h.GetXaxis().GetXmax() - self._h.GetXaxis().GetXmin()) / self._h.GetNbinsX()
-        self._h.GetYaxis().SetTitle("Events /"+ str.format("{0:.0f} GeV", nEvts));
+        ytitle = "Events / %.2f units" %nEvts
+        self._h.GetYaxis().SetTitle(ytitle)
 
     def SetStyleUnitDphi(self, color, style = 0, fill = 0):
         self._h.GetXaxis().SetLabelFont(self._labelFont);
@@ -125,7 +127,7 @@ class Histo(object):
         self._h.SetFillStyle(fill)
         self._h.GetXaxis().SetTitle(self._title)
         nEvts = (self._h.GetXaxis().GetXmax() - self._h.GetXaxis().GetXmin()) / self._h.GetNbinsX()
-        self._h.GetYaxis().SetTitle("Events /"+ str.format("{0:.1f}", nEvts));
+        self._h.GetYaxis().SetTitle("Events / "+ str.format("{0:.1f}", nEvts))
     
     def Fill(self, value, weight = "1"):
         self._h.Fill(value, weight)
@@ -279,16 +281,16 @@ class Stack(object):
     def Clone(self, s, name):
         self._name= name
         self._title=s._title
-#        self._hs = ROOT.THStack(self._name,"")
+        #        self._hs = ROOT.THStack(self._name,"")
         self._hs = s._hs.Clone(self._name)
-#        self._latex = ROOT.TLatex()
+        #        self._latex = ROOT.TLatex()
         self._latex = s._latex.Clone()
 
 
     def SetStyle(self, options = ""):
         self._hs.Draw(options)
         self._hs.GetHistogram().GetXaxis().SetLabelFont(self._labelFont);
-#        self._hs.GetHistogram().GetYaxis().SetMaxDigits(4);
+        #        self._hs.GetHistogram().GetYaxis().SetMaxDigits(4);
         self._hs.GetHistogram().GetYaxis().SetLabelFont(self._labelFont);
         self._hs.GetHistogram().GetXaxis().SetTitleFont(self._titleFont);
         self._hs.GetHistogram().GetYaxis().SetTitleFont(self._titleFont);
@@ -305,8 +307,10 @@ class Stack(object):
         self._hs.GetHistogram().GetXaxis().SetTitle(self._title)
         nEvts = (self._hs.GetHistogram().GetXaxis().GetXmax() - self._hs.GetHistogram().GetXaxis().GetXmin()) / self._hs.GetHistogram().GetNbinsX()
         #self._hs.GetHistogram().GetYaxis().SetTitle("Number of events / "+ str.format("{0:.2f}", nEvts) );
-        self._hs.GetHistogram().GetYaxis().SetTitle("Events/bin"); #+ str.format("{0:.0f}", nEvts)
- #       self._hs.Draw(options)
+        ytitle = "Events / %.2f units" %nEvts
+        self._hs.GetYaxis().SetTitle(ytitle)
+        #self._hs.GetHistogram().GetYaxis().SetTitle("Events/"+ str.format("{0:.2f}", nEvts)
+        #       self._hs.Draw(options)
 
     def SetStyleUnit(self, options = ""):
         self._hs.Draw(options)
@@ -326,7 +330,9 @@ class Stack(object):
 
         self._hs.GetHistogram().GetXaxis().SetTitle(self._title)
         nEvts = (self._hs.GetHistogram().GetXaxis().GetXmax() - self._hs.GetHistogram().GetXaxis().GetXmin()) / self._hs.GetHistogram().GetNbinsX()
-        self._hs.GetHistogram().GetYaxis().SetTitle("Events / "+ str.format("{0:.0f} GeV", nEvts));
+        ytitle = "Events / %.2f units" %nEvts
+        self._hs.GetYaxis().SetTitle(ytitle)
+        #self._hs.GetHistogram().GetYaxis().SetTitle("Events / "+ str.format("{0:.0f} GeV", nEvts));
 
     def SetStyleUnitDphi(self, options = ""):
         self._hs.Draw(options)
@@ -413,8 +419,8 @@ class Stack(object):
 
 class Legend(object):
 
-    _coords = (0.46, 0.56, 0.95, 0.88)
-    _textSize = 0.045
+    _coords = (0.45, 0.56, 0.94, 0.88)
+    _textSize = 0.055
 
     def __init__(self, coords = None, textSize=None):
 

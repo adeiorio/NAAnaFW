@@ -40,7 +40,8 @@ import plots.common, plots.electron, plots.muon
 
 
 
-import tdrstyle, CMS_lumi
+import tdrstyle
+from CMS_lumi import *
 
 
 def sumerrors(h):
@@ -101,6 +102,11 @@ elif opt.channel == 'muonantiiso':
     store += plots.muon.store
 
 elif opt.channel == 'electron':
+    # Add electron specific settings and plots to store
+    settings.update(plots.electron.settings)
+    store += plots.electron.store
+
+elif opt.channel == 'electronantiiso':
     # Add electron specific settings and plots to store
     settings.update(plots.electron.settings)
     store += plots.electron.store
@@ -745,22 +751,25 @@ for var,(title,scale,rebin, usrrng) in settings.iteritems():
         #ratio.GetYaxis().SetLabelOffset(0.015)
         ratio.GetYaxis().SetLabelOffset(0.01)
 
-    CMS_lumi.writeExtraText = 1
-    CMS_lumi.extraText = "Preliminary"
+#    CMS_lumi.writeExtraText = 1
+#    CMS_lumi.extraText = "Preliminary"
     lumi = opt.lumi
+    iPeriod = 0
+    iPos = 11
     if(lumi<1.):
         lumi = lumi*1000
         unit = " pb^{-1}"
     else: unit = " fb^{-1}"
-    CMS_lumi.lumi_sqrtS = str(lumi)+ unit +" (13 TeV)" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+    lumi_sqrtS = str(lumi)+ unit +" (13 TeV)" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+#    CMS_lumi.lumi_sqrtS = str(lumi)+ unit +" (13 TeV)" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+    CMS_lumi(pad1, lumi_sqrtS, iPos)
     if opt.normData==1:
-        CMS_lumi.lumi_sqrtS = str(lumi)+ unit +" (13 TeV), norm. to data" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
-    iPeriod = 0
-    iPos = 11
+        lumi_sqrtS = str(lumi)+ unit +" (13 TeV), norm. to data" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+        CMS_lumi(pad1, lumi_sqrtS, iPos)
 
     # writing the lumi information and the CMS "logo"
     # Ratio Check HERE
-    CMS_lumi.CMS_lumi(pad1, iPeriod, iPos)
+ #    CMS_lumi.CMS_lumi(pad1, iPeriod, iPos)
 
     c1.cd()
     c1.Update();
